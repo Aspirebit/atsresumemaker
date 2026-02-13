@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Loader2, Copy, Download, Save } from 'lucide-react';
+import { FileText, Loader2, Copy, Download, Save, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
@@ -13,7 +14,10 @@ export default function CoverLetterGenerator({ resumeData, onSave }) {
   const [keyPoints, setKeyPoints] = useState('');
   const [generating, setGenerating] = useState(false);
   const [coverLetter, setCoverLetter] = useState('');
+  const [variations, setVariations] = useState([]);
+  const [activeVariation, setActiveVariation] = useState(0);
   const [jobAppId, setJobAppId] = useState('');
+  const [saveToResume, setSaveToResume] = useState(false);
   const [jobApplications, setJobApplications] = useState([]);
 
   useEffect(() => {
@@ -30,23 +34,46 @@ export default function CoverLetterGenerator({ resumeData, onSave }) {
   };
 
   const saveCoverLetter = async () => {
-    if (!jobAppId) {
-      toast.error('Please select a job application');
-      return;
-    }
-    
     try {
-      await base44.entities.JobApplication.update(jobAppId, {
-        coverLetter: coverLetter
-      });
-      toast.success('Cover letter saved to application!');
+      const promises = [];
+      
+      // Save to job application if selected
+      if (jobAppId) {
+        promises.push(
+          base44.entities.JobApplication.update(jobAppId, {
+            coverLetter: coverLetter
+          })
+        );
+      }
+      
+      // Save to resume if enabled
+      if (saveToResume && resumeData?.id) {
+        promises.push(
+          base44.entities.Resume.update(resumeData.id, {
+            coverLetter: coverLetter
+          })
+        );
+      }
+      
+      if (promises.length === 0) {
+        toast.error('Please select where to save the cover letter');
+        return;
+      }
+      
+      await Promise.all(promises);
+      
+      const destinations = [];
+      if (jobAppId) destinations.push('job application');
+      if (saveToResume) destinations.push('resume');
+      
+      toast.success(`Cover letter saved to ${destinations.join(' and ')}!`);
       if (onSave) onSave();
     } catch (error) {
       toast.error('Failed to save cover letter');
     }
   };
 
-  const generateCoverLetter = async () => {
+  const generateVariations = async () => {
     if (!jobDescription.trim()) {
       toast.error('Please enter the job description');
       return;
@@ -54,6 +81,8 @@ export default function CoverLetterGenerator({ resumeData, onSave }) {
 
     setGenerating(true);
     try {
+      toast.info('Generating 3 variations for A/B testing...');
+      
       // First, analyze the job description for keywords and requirements
       const analysisResponse = await base44.integrations.Core.InvokeLLM({
         prompt: `Analyze this job description and extract key information:
@@ -94,9 +123,18 @@ Extract and return a JSON object with:
         `${p.name}: ${p.description}${p.link ? ` (${p.link})` : ''}`
       ).join('\n') || '';
 
-      // Generate tailored cover letter
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Generate a highly tailored professional cover letter using this analysis:
+      // Generate 3 variations with different tones
+      const tones = [
+        { name: 'Professional & Formal', desc: 'traditional corporate style' },
+        { name: 'Modern & Enthusiastic', desc: 'energetic and passionate tone' },
+        { name: 'Balanced & Confident', desc: 'mix of professionalism and personality' }
+      ];
+
+      const generatedVariations = [];
+
+      for (const [index, tone] of tones.entries()) {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Generate a highly tailored professional cover letter with a ${tone.desc} using this analysis:
 
 JOB ANALYSIS:
 Required Skills: ${analysisResponse.requiredSkills?.join(', ')}
@@ -139,12 +177,22 @@ INSTRUCTIONS:
 9. Keep to 3-4 well-structured paragraphs (350-400 words)
 10. Format as a business letter with proper date and salutation
 
-Start with today's date, then "Dear Hiring Manager," (or use company name if mentioned in job description).`,
-        add_context_from_internet: false
-      });
+Start with today's date, then "Dear Hiring Manager," (or use company name if mentioned in job description).
 
-      setCoverLetter(response);
-      toast.success('Cover letter generated with keyword optimization!');
+IMPORTANT: This is variation ${index + 1} with a ${tone.desc}. Make it distinct from other variations while maintaining quality.`,
+          add_context_from_internet: false
+        });
+
+        generatedVariations.push({
+          title: tone.name,
+          content: response
+        });
+      }
+
+      setVariations(generatedVariations);
+      setCoverLetter(generatedVariations[0].content);
+      setActiveVariation(0);
+      toast.success('3 variations generated! Compare and choose the best.');
     } catch (error) {
       console.error('Generation error:', error);
       toast.error('Failed to generate cover letter');
@@ -200,31 +248,62 @@ Start with today's date, then "Dear Hiring Manager," (or use company name if men
           />
         </div>
 
-        <Button 
-          onClick={generateCoverLetter} 
-          disabled={generating}
-          className="w-full bg-blue-600 hover:bg-blue-700"
-        >
-          {generating ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <FileText className="w-4 h-4 mr-2" />
-              Generate Cover Letter
-            </>
+        <div className="flex gap-2">
+          <Button 
+            onClick={generateVariations} 
+            disabled={generating}
+            className="flex-1 bg-blue-600 hover:bg-blue-700"
+          >
+            {generating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <FileText className="w-4 h-4 mr-2" />
+                Generate 3 Variations
+              </>
+            )}
+          </Button>
+          {variations.length > 0 && (
+            <Button 
+              onClick={generateVariations} 
+              disabled={generating}
+              variant="outline"
+              size="icon"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </Button>
           )}
-        </Button>
+        </div>
 
-        {coverLetter && (
+        {variations.length > 0 && (
           <div className="space-y-3 border-t pt-3">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 max-h-96 overflow-y-auto">
-              <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-sans">
-                {coverLetter}
-              </pre>
-            </div>
+            <Tabs value={activeVariation.toString()} onValueChange={(v) => {
+              const idx = parseInt(v);
+              setActiveVariation(idx);
+              setCoverLetter(variations[idx].content);
+            }}>
+              <TabsList className="grid w-full grid-cols-3">
+                {variations.map((v, idx) => (
+                  <TabsTrigger key={idx} value={idx.toString()} className="text-xs">
+                    {v.title.split('&')[0]}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              
+              {variations.map((variation, idx) => (
+                <TabsContent key={idx} value={idx.toString()} className="space-y-3">
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 max-h-96 overflow-y-auto">
+                    <pre className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap font-sans">
+                      {variation.content}
+                    </pre>
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+
             <div className="flex gap-2">
               <Button size="sm" variant="outline" onClick={copyCoverLetter} className="flex-1">
                 <Copy className="w-3 h-3 mr-2" />
@@ -236,23 +315,44 @@ Start with today's date, then "Dear Hiring Manager," (or use company name if men
               </Button>
             </div>
             
-            <div className="border-t pt-3 space-y-2">
-              <Label className="text-xs">Save to Job Application</Label>
-              <Select value={jobAppId} onValueChange={setJobAppId}>
-                <SelectTrigger className="text-sm">
-                  <SelectValue placeholder="Select application" />
-                </SelectTrigger>
-                <SelectContent>
-                  {jobApplications.map((app) => (
-                    <SelectItem key={app.id} value={app.id}>
-                      {app.jobTitle} - {app.company}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Button size="sm" onClick={saveCoverLetter} className="w-full" variant="secondary">
+            <div className="border-t pt-3 space-y-3">
+              <div className="space-y-2">
+                <Label className="text-xs font-semibold">Save Options</Label>
+                <div className="space-y-2">
+                  <div>
+                    <Label className="text-xs text-muted-foreground">Job Application (Optional)</Label>
+                    <Select value={jobAppId} onValueChange={setJobAppId}>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Select application" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {jobApplications.map((app) => (
+                          <SelectItem key={app.id} value={app.id}>
+                            {app.jobTitle} - {app.company}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="saveToResume"
+                      checked={saveToResume}
+                      onChange={(e) => setSaveToResume(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300"
+                    />
+                    <Label htmlFor="saveToResume" className="text-xs cursor-pointer">
+                      Also save to resume for future use
+                    </Label>
+                  </div>
+                </div>
+              </div>
+              
+              <Button size="sm" onClick={saveCoverLetter} className="w-full bg-green-600 hover:bg-green-700">
                 <Save className="w-3 h-3 mr-2" />
-                Save to Application
+                Save Cover Letter
               </Button>
             </div>
           </div>

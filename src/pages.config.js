@@ -54,6 +54,7 @@ import Privacy from './pages/Privacy';
 import Saved from './pages/Saved';
 import Settings from './pages/Settings';
 import TemplateMarketplace from './pages/TemplateMarketplace';
+import SharedResume from './pages/SharedResume';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +66,7 @@ export const PAGES = {
     "Saved": Saved,
     "Settings": Settings,
     "TemplateMarketplace": TemplateMarketplace,
+    "SharedResume": SharedResume,
 }
 
 export const pagesConfig = {

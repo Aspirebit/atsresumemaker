@@ -158,6 +158,9 @@ export default function Dashboard() {
 
         {/* Job Applications & Interviews */}
         <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">
+            Job Applications & Interviews
+          </h2>
           <EnhancedJobTracker />
         </div>
 
