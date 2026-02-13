@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, Settings, Menu } from 'lucide-react';
+import { Home, FileText, Settings, Menu, Sparkles, Store } from 'lucide-react';
 import { createPageUrl } from './utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,8 +15,9 @@ export default function Layout({ children, currentPageName }) {
   
   const navItems = [
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
+    { name: 'AI Builder', path: createPageUrl('Editor'), icon: Sparkles },
     { name: 'Saved', path: createPageUrl('Saved'), icon: FileText },
-    { name: 'Marketplace', path: createPageUrl('TemplateMarketplace'), icon: FileText },
+    { name: 'Marketplace', path: createPageUrl('TemplateMarketplace'), icon: Store },
     { name: 'Settings', path: createPageUrl('Settings'), icon: Settings },
   ];
 

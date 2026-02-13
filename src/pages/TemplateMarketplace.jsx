@@ -243,14 +243,20 @@ export default function TemplateMarketplace() {
                     <Button 
                       size="sm" 
                       variant="outline" 
-                      onClick={() => setSelectedTemplate(template)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedTemplate(template);
+                      }}
                       className="flex-1"
                     >
                       Preview
                     </Button>
                     <Button 
                       size="sm" 
-                      onClick={() => applyTemplate(template)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        applyTemplate(template);
+                      }}
                       className="flex-1 bg-blue-600 hover:bg-blue-700"
                     >
                       Use Template
@@ -275,17 +281,44 @@ export default function TemplateMarketplace() {
                 )}
                 <p className="text-sm text-muted-foreground">{selectedTemplate.description}</p>
                 
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map((rating) => (
-                    <button
-                      key={rating}
-                      onClick={() => rateTemplate(selectedTemplate.id, rating)}
-                      className="hover:scale-110 transition-transform"
-                    >
-                      <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-                    </button>
-                  ))}
+                <div>
+                  <p className="text-sm font-medium mb-2">Rate this template:</p>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <button
+                        key={rating}
+                        onClick={() => {
+                          rateTemplate(selectedTemplate.id, rating);
+                          setSelectedTemplate(null);
+                        }}
+                        className="hover:scale-110 transition-transform"
+                      >
+                        <Star className="w-6 h-6 fill-yellow-400 text-yellow-400" />
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
+                {selectedTemplate.reviews && selectedTemplate.reviews.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium mb-2">Reviews:</p>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {selectedTemplate.reviews.map((review, idx) => (
+                        <div key={idx} className="text-sm p-2 bg-gray-50 dark:bg-gray-800 rounded">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium">{review.userName}</span>
+                            <div className="flex">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                              ))}
+                            </div>
+                          </div>
+                          {review.comment && <p className="text-muted-foreground">{review.comment}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <Button 
                   onClick={() => applyTemplate(selectedTemplate)}

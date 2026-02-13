@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, FileText, TrendingUp, Clock, Sparkles, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -101,7 +102,9 @@ export default function Dashboard() {
 
         {/* AI Tools */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">AI Tools</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground">AI-Powered Tools</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <QuickAITools onCoverLetterClick={() => {
               if (resumes.length > 0) {
