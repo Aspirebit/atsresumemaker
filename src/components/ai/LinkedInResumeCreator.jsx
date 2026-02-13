@@ -25,12 +25,34 @@ export default function LinkedInResumeCreator() {
     setGenerating(true);
     try {
       const prompt = linkedinUrl.trim() 
-        ? `Extract resume information from this LinkedIn profile URL: ${linkedinUrl}. If you can't access the URL, inform the user to paste their profile text instead.`
-        : `Parse this LinkedIn profile data and create a structured resume:
+        ? `Extract detailed resume information from this LinkedIn profile URL: ${linkedinUrl}. 
+
+Parse the profile carefully and extract:
+- Full name from the headline
+- Current job title and company
+- Location
+- Professional summary (create a concise 2-3 sentence summary based on the about section)
+- All work experiences with exact company names, job titles, locations, start/end dates (format as "Jan 2020" or "2020"), and detailed descriptions
+- All education entries with school names, degrees, fields of study, and dates
+- All listed skills (extract the complete list of skills from the skills section)
+- Certifications and projects if available
+
+Be accurate with dates and company names.`
+        : `Parse this LinkedIn profile data carefully and extract structured resume information:
 
 ${profileData}
 
-Extract: name, email (if available), phone, location, summary, work experience (with dates, company, position, description), education (school, degree, field, dates), skills, and any projects or certifications.`;
+Instructions:
+1. Identify the person's name from the top of the profile
+2. Extract current job title and company from the headline or first experience
+3. Find the location (city, state/country)
+4. Create a professional summary from the "About" section (2-3 sentences highlighting key expertise and experience)
+5. Parse ALL work experiences - extract company names, job titles, locations, dates (format as "Jan 2020" or "2020-01"), and job descriptions
+6. Extract education - school names, degrees, fields of study, graduation years
+7. List ALL skills mentioned in the skills section (look for skills keywords like "JavaScript", "Python", "Project Management", etc.)
+8. Include any certifications or notable projects
+
+Format dates consistently and ensure company/school names are accurate.`;
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -80,6 +102,17 @@ Extract: name, email (if available), phone, location, summary, work experience (
             skills: {
               type: "array",
               items: { type: "string" }
+            },
+            projects: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  description: { type: "string" },
+                  link: { type: "string" }
+                }
+              }
             }
           }
         }
@@ -89,12 +122,32 @@ Extract: name, email (if available), phone, location, summary, work experience (
       const newResume = await base44.entities.Resume.create({
         title: `${result.contact?.fullName || 'LinkedIn'} Resume`,
         template: 'professional',
-        contact: result.contact || {},
+        contact: {
+          fullName: result.contact?.fullName || '',
+          email: result.contact?.email || '',
+          phone: result.contact?.phone || '',
+          location: result.contact?.location || '',
+          linkedin: result.contact?.linkedin || linkedinUrl
+        },
         summary: result.summary || '',
-        experience: result.experience || [],
-        education: result.education || [],
+        experience: (result.experience || []).map(exp => ({
+          company: exp.company || '',
+          position: exp.position || '',
+          location: exp.location || '',
+          startDate: exp.startDate || '',
+          endDate: exp.current ? 'Present' : (exp.endDate || ''),
+          current: exp.current || false,
+          description: exp.description || ''
+        })),
+        education: (result.education || []).map(edu => ({
+          school: edu.school || '',
+          degree: edu.degree || '',
+          field: edu.field || '',
+          startDate: edu.startDate || '',
+          endDate: edu.endDate || ''
+        })),
         skills: result.skills || [],
-        projects: [],
+        projects: result.projects || [],
         awards: []
       });
 
@@ -138,7 +191,7 @@ Extract: name, email (if available), phone, location, summary, work experience (
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
                 placeholder="https://linkedin.com/in/yourprofile"
-                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
+                className="w-full px-4 py-3 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <p className="text-xs text-muted-foreground mt-1">
                 AI will attempt to extract data from the URL
@@ -154,7 +207,7 @@ Extract: name, email (if available), phone, location, summary, work experience (
                 onChange={(e) => setProfileData(e.target.value)}
                 rows={10}
                 placeholder="Copy and paste your LinkedIn profile information here including your experience, education, skills, etc."
-                className="font-mono text-sm"
+                className="bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
