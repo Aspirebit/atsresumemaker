@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Loader2, Copy, Download, Save, RefreshCw } from 'lucide-react';
+import { FileText, Loader2, Copy, Download, Save, RefreshCw, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
@@ -13,9 +14,13 @@ export default function CoverLetterGenerator({ resumeData, onSave }) {
   const [jobDescription, setJobDescription] = useState('');
   const [keyPoints, setKeyPoints] = useState('');
   const [generating, setGenerating] = useState(false);
+  const [improvingSuggestions, setImprovingSuggestions] = useState(false);
   const [coverLetter, setCoverLetter] = useState('');
   const [variations, setVariations] = useState([]);
   const [activeVariation, setActiveVariation] = useState(0);
+  const [improvementSuggestions, setImprovementSuggestions] = useState(null);
+  const [tone, setTone] = useState('professional');
+  const [length, setLength] = useState('medium');
   const [jobAppId, setJobAppId] = useState('');
   const [saveToResume, setSaveToResume] = useState(false);
   const [jobApplications, setJobApplications] = useState([]);
@@ -123,11 +128,25 @@ Extract and return a JSON object with:
         `${p.name}: ${p.description}${p.link ? ` (${p.link})` : ''}`
       ).join('\n') || '';
 
-      // Generate 3 variations with different tones
+      // Define tone and length descriptions
+      const toneDescriptions = {
+        professional: 'traditional, formal, and conservative corporate language',
+        modern: 'contemporary, engaging, and dynamic tone',
+        balanced: 'professional yet personable, approachable but respectful',
+        enthusiastic: 'energetic, passionate, and highly motivated tone'
+      };
+
+      const lengthDescriptions = {
+        short: '2-3 concise paragraphs (200-250 words)',
+        medium: '3-4 well-structured paragraphs (300-400 words)',
+        long: '4-5 detailed paragraphs (400-500 words)'
+      };
+
+      // Generate 3 variations with slight stylistic differences
       const tones = [
-        { name: 'Professional & Formal', desc: 'traditional corporate style' },
-        { name: 'Modern & Enthusiastic', desc: 'energetic and passionate tone' },
-        { name: 'Balanced & Confident', desc: 'mix of professionalism and personality' }
+        { name: 'Variation 1', desc: toneDescriptions[tone] },
+        { name: 'Variation 2', desc: toneDescriptions[tone] + ' with slightly more emphasis on achievements' },
+        { name: 'Variation 3', desc: toneDescriptions[tone] + ' with focus on company alignment' }
       ];
 
       const generatedVariations = [];
@@ -173,13 +192,14 @@ INSTRUCTIONS:
 5. Connect the candidate's experience to the company values if mentioned
 6. Show understanding of the role's challenges and how the candidate can address them
 7. Close with confidence and clear call to action for next steps
-8. Maintain professional yet personable tone appropriate for the experience level
-9. Keep to 3-4 well-structured paragraphs (350-400 words)
-10. Format as a business letter with proper date and salutation
+8. Maintain the specified tone: ${tone.desc}
+9. Target length: ${lengthDescriptions[length]}
+10. Include quantifiable achievements where possible
+11. Format as a business letter with proper date and salutation
 
 Start with today's date, then "Dear Hiring Manager," (or use company name if mentioned in job description).
 
-IMPORTANT: This is variation ${index + 1} with a ${tone.desc}. Make it distinct from other variations while maintaining quality.`,
+IMPORTANT: This is variation ${index + 1}. ${tone.desc}. Make it distinct but high quality.`,
           add_context_from_internet: false
         });
 
@@ -219,6 +239,76 @@ IMPORTANT: This is variation ${index + 1} with a ${tone.desc}. Make it distinct 
     toast.success('Downloaded cover letter');
   };
 
+  const getSuggestions = async () => {
+    if (!coverLetter || !variations[activeVariation]) {
+      toast.error('Generate a cover letter first');
+      return;
+    }
+
+    setImprovingSuggestions(true);
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this cover letter and provide specific improvement suggestions:
+
+COVER LETTER:
+${variations[activeVariation].content}
+
+Provide detailed feedback on:
+1. **Clarity Issues**: Identify sentences that are unclear, overly complex, or wordy with specific fixes
+2. **Persuasiveness**: Suggest ways to make arguments more compelling and impactful
+3. **Structure**: Advise on paragraph organization and flow improvements
+4. **Keyword Optimization**: Suggest relevant industry keywords to add naturally
+5. **Specific Edits**: Provide 3-5 concrete sentence-level improvements with before/after examples
+
+Be specific, actionable, and provide improved versions.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            overallScore: { type: "number", description: "Score 1-10" },
+            clarityIssues: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  issue: { type: "string" },
+                  suggestion: { type: "string" }
+                }
+              }
+            },
+            persuasivenessImprovements: {
+              type: "array",
+              items: { type: "string" }
+            },
+            structureAdvice: { type: "string" },
+            keywordSuggestions: {
+              type: "array",
+              items: { type: "string" }
+            },
+            specificEdits: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  original: { type: "string" },
+                  improved: { type: "string" },
+                  reason: { type: "string" }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      setImprovementSuggestions(result);
+      toast.success('Suggestions ready!');
+    } catch (error) {
+      console.error('Suggestion error:', error);
+      toast.error('Failed to generate suggestions');
+    } finally {
+      setImprovingSuggestions(false);
+    }
+  };
+
   return (
     <Card className="h-full overflow-y-auto">
       <CardHeader className="pb-3 border-b">
@@ -246,6 +336,36 @@ IMPORTANT: This is variation ${index + 1} with a ${tone.desc}. Make it distinct 
             onChange={(e) => setKeyPoints(e.target.value)}
             className="h-24 text-sm"
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label className="text-xs mb-1">Tone</Label>
+            <Select value={tone} onValueChange={setTone}>
+              <SelectTrigger className="text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="professional">Professional</SelectItem>
+                <SelectItem value="modern">Modern</SelectItem>
+                <SelectItem value="balanced">Balanced</SelectItem>
+                <SelectItem value="enthusiastic">Enthusiastic</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs mb-1">Length</Label>
+            <Select value={length} onValueChange={setLength}>
+              <SelectTrigger className="text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="short">Short (200-250 words)</SelectItem>
+                <SelectItem value="medium">Medium (300-400 words)</SelectItem>
+                <SelectItem value="long">Long (400-500 words)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="flex gap-2">
@@ -304,7 +424,84 @@ IMPORTANT: This is variation ${index + 1} with a ${tone.desc}. Make it distinct 
               ))}
             </Tabs>
 
-            <div className="flex gap-2">
+            {improvementSuggestions && (
+              <Card className="bg-muted/30">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    AI Improvement Suggestions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Score:</span>
+                    <Badge>{improvementSuggestions.overallScore}/10</Badge>
+                  </div>
+
+                  {improvementSuggestions.clarityIssues?.length > 0 && (
+                    <div>
+                      <p className="font-semibold mb-1">📝 Clarity</p>
+                      <div className="space-y-1">
+                        {improvementSuggestions.clarityIssues.map((item, idx) => (
+                          <Card key={idx} className="p-2 bg-background">
+                            <p className="text-destructive mb-1">{item.issue}</p>
+                            <p className="text-primary">💡 {item.suggestion}</p>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {improvementSuggestions.persuasivenessImprovements?.length > 0 && (
+                    <div>
+                      <p className="font-semibold mb-1">💪 Persuasiveness</p>
+                      <ul className="space-y-1 list-disc list-inside">
+                        {improvementSuggestions.persuasivenessImprovements.map((tip, idx) => (
+                          <li key={idx}>{tip}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {improvementSuggestions.structureAdvice && (
+                    <div>
+                      <p className="font-semibold mb-1">🏗️ Structure</p>
+                      <Card className="p-2 bg-background">
+                        <p>{improvementSuggestions.structureAdvice}</p>
+                      </Card>
+                    </div>
+                  )}
+
+                  {improvementSuggestions.keywordSuggestions?.length > 0 && (
+                    <div>
+                      <p className="font-semibold mb-1">🔑 Keywords</p>
+                      <div className="flex flex-wrap gap-1">
+                        {improvementSuggestions.keywordSuggestions.map((kw, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">{kw}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {improvementSuggestions.specificEdits?.length > 0 && (
+                    <div>
+                      <p className="font-semibold mb-1">✏️ Specific Edits</p>
+                      <div className="space-y-2">
+                        {improvementSuggestions.specificEdits.map((edit, idx) => (
+                          <Card key={idx} className="p-2 bg-background">
+                            <p className="text-muted-foreground mb-1">Before: {edit.original}</p>
+                            <p className="text-primary font-medium mb-1">After: {edit.improved}</p>
+                            <p className="italic">{edit.reason}</p>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="flex gap-2 flex-wrap">
               <Button size="sm" variant="outline" onClick={copyCoverLetter} className="flex-1">
                 <Copy className="w-3 h-3 mr-2" />
                 Copy
@@ -312,6 +509,20 @@ IMPORTANT: This is variation ${index + 1} with a ${tone.desc}. Make it distinct 
               <Button size="sm" variant="outline" onClick={downloadCoverLetter} className="flex-1">
                 <Download className="w-3 h-3 mr-2" />
                 Download
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={getSuggestions}
+                disabled={improvingSuggestions}
+                className="flex-1"
+              >
+                {improvingSuggestions ? (
+                  <Loader2 className="w-3 h-3 mr-2 animate-spin" />
+                ) : (
+                  <Sparkles className="w-3 h-3 mr-2" />
+                )}
+                Improve
               </Button>
             </div>
             
