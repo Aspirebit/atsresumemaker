@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Plus, FileText, TrendingUp, Clock, Sparkles, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -89,15 +88,54 @@ export default function Dashboard() {
     return `${Math.floor(seconds / 86400)} days ago`;
   };
 
+  const handleCreateResume = (template = 'professional') => {
+    navigate(createPageUrl('Editor') + (template !== 'professional' ? `?template=${template}` : ''));
+  };
+
+  const timeAgo = getTimeAgo;
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-background dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Hero Section */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
-            Welcome back!
+            Welcome back! 👋
           </h1>
-          <p className="text-gray-600 dark:text-muted-foreground">Create a professional resume in minutes</p>
+          <p className="text-gray-600 dark:text-muted-foreground">Let's build your perfect resume</p>
+        </div>
+
+        {/* Quick Start Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <Card className="bg-gradient-to-br from-blue-600 to-blue-700 border-0 text-white hover:shadow-xl transition-all cursor-pointer" onClick={handleCreateResume}>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-1">AI Resume Builder</h3>
+                  <p className="text-blue-100 text-sm">Create a professional resume with AI assistance</p>
+                </div>
+                <Plus className="w-6 h-6" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-purple-600 to-purple-700 border-0 text-white hover:shadow-xl transition-all cursor-pointer" onClick={() => setShowTemplateGallery(true)}>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                  <FileText className="w-8 h-8" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-1">Start from Template</h3>
+                  <p className="text-purple-100 text-sm">Choose from professional templates</p>
+                </div>
+                <Plus className="w-6 h-6" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* AI Tools */}
@@ -123,58 +161,7 @@ export default function Dashboard() {
           <EnhancedJobTracker />
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card
-            className="border-2 border-dashed border-purple-300 dark:border-purple-700 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950 dark:to-blue-950 hover:from-purple-100 hover:to-blue-100 dark:hover:from-purple-900 dark:hover:to-blue-900 transition-colors cursor-pointer"
-            onClick={() => setShowAIWorkflow(true)}
-          >
-            <CardContent className="flex flex-col items-center justify-center py-8">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center mb-3">
-                <Sparkles className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-semibold text-gray-900 dark:text-foreground text-lg">AI Resume Builder</h3>
-              <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">Build with AI assistance</p>
-            </CardContent>
-          </Card>
 
-          <Card
-            className="border-2 border-dashed border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950 hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors cursor-pointer"
-            onClick={() => setShowTemplateGallery(true)}
-          >
-            <CardContent className="flex flex-col items-center justify-center py-8">
-              <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-3">
-                <Plus className="w-7 h-7 text-white" />
-              </div>
-              <h3 className="font-semibold text-gray-900 dark:text-foreground text-lg">Start from Template</h3>
-              <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">Choose and customize</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="flex items-center gap-4 py-6">
-              <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                <FileText className="w-6 h-6 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-foreground">{resumes.length}</p>
-                <p className="text-sm text-gray-600 dark:text-muted-foreground">Saved Resumes</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="flex items-center gap-4 py-6">
-              <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-gray-900 dark:text-foreground">12</p>
-                <p className="text-sm text-gray-600 dark:text-muted-foreground">Downloads</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Templates Section */}
         <div className="mb-8">
@@ -214,46 +201,82 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Recent Activity */}
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Clock className="w-5 h-5 text-gray-600 dark:text-muted-foreground" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground">Recent Activity</h2>
-          </div>
-          
-          <Card>
-            <CardContent className="p-0">
+        {/* Recent Resumes & Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="w-5 h-5 text-gray-600 dark:text-muted-foreground" />
+                Recent Resumes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
               {loading ? (
-                <div className="p-8 text-center text-gray-500 dark:text-muted-foreground">Loading...</div>
+                <div className="text-center py-8 text-gray-500 dark:text-muted-foreground">Loading...</div>
               ) : resumes.length === 0 ? (
-                <div className="p-8 text-center text-gray-500 dark:text-muted-foreground">
-                  <p>No resumes yet. Create your first resume to get started!</p>
-                  <Button onClick={() => setShowTemplateGallery(true)} className="mt-4">
-                    Create Resume
+                <div className="text-center py-12">
+                  <FileText className="w-16 h-16 mx-auto mb-3 text-gray-300 dark:text-gray-700" />
+                  <p className="text-gray-500 dark:text-muted-foreground mb-4">No resumes yet</p>
+                  <Button onClick={handleCreateResume} className="bg-blue-600 hover:bg-blue-700">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Your First Resume
                   </Button>
                 </div>
               ) : (
-                resumes.map((item, index) => (
-                  <div
-                    key={item.id}
-                    className={`flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-accent cursor-pointer transition-colors ${
-                      index !== resumes.length - 1 ? 'border-b border-gray-200 dark:border-border' : ''
-                    }`}
-                    onClick={() => navigate(`${createPageUrl('Editor')}?id=${item.id}`)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="space-y-3">
+                  {resumes.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-accent transition-colors cursor-pointer"
+                      onClick={() => navigate(`${createPageUrl('Editor')}?id=${item.id}`)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-blue-600 dark:text-primary" />
+                        <div>
+                          <h4 className="font-medium text-gray-900 dark:text-foreground">{item.title}</h4>
+                          <p className="text-sm text-gray-500 dark:text-muted-foreground">
+                            Updated {timeAgo(item.updated_date)}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-medium text-gray-900 dark:text-foreground">{item.title}</h3>
-                        <p className="text-sm text-gray-500 dark:text-muted-foreground">Updated {getTimeAgo(item.updated_date)}</p>
-                      </div>
+                      <span className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 capitalize">
+                        {item.template}
+                      </span>
                     </div>
-                    <Button variant="ghost" size="sm">Open</Button>
-                  </div>
-                ))
+                  ))}
+                </div>
               )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-600" />
+                Quick Stats
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-muted-foreground">Total Resumes</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-foreground">{resumes.length}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-muted-foreground">This Month</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-foreground">
+                  {resumes.filter(r => {
+                    const date = new Date(r.created_date);
+                    const now = new Date();
+                    return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+                  }).length}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 dark:text-muted-foreground">Templates Used</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-foreground">
+                  {new Set(resumes.map(r => r.template)).size}
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
