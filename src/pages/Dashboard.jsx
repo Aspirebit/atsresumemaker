@@ -3,6 +3,8 @@ import { Plus, FileText, TrendingUp, Clock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import TemplateGallery from '@/components/dashboard/TemplateGallery';
 import AIWorkflow from '@/components/ai/AIWorkflow';
 import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
@@ -12,6 +14,7 @@ import MinimalistTemplate from '@/components/resume/templates/MinimalistTemplate
 import ExecutiveTemplate from '@/components/resume/templates/ExecutiveTemplate';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [showAIWorkflow, setShowAIWorkflow] = useState(false);
   const [resumes, setResumes] = useState([]);
@@ -146,7 +149,7 @@ export default function Dashboard() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-gray-900">Resume Templates</h2>
-            <Button variant="ghost" className="text-blue-600">View All</Button>
+            <Button variant="ghost" className="text-blue-600" onClick={() => setShowTemplateGallery(true)}>View All</Button>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -156,7 +159,7 @@ export default function Dashboard() {
                 <Card
                   key={template.id}
                   className="hover:shadow-lg transition-shadow cursor-pointer group overflow-hidden"
-                  onClick={() => setShowTemplateGallery(true)}
+                  onClick={() => navigate(`${createPageUrl('Editor')}?template=${template.id}`)}
                 >
                   <CardContent className="p-3">
                     <div className="h-40 rounded-lg mb-2 relative overflow-hidden bg-white">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User, Bell, Globe, Palette, Download, Lock, HelpCircle, LogOut, ChevronRight, Trash2, AlertTriangle, Moon, Sun } from 'lucide-react';
+import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,10 +83,10 @@ export default function Settings() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
             Settings
           </h1>
-          <p className="text-gray-600">Manage your account and preferences</p>
+          <p className="text-muted-foreground">Manage your account and preferences</p>
         </div>
 
         {/* Profile Section */}
@@ -100,15 +101,15 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="name" className="text-sm font-medium text-gray-700">Full Name</Label>
+              <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
               <Input id="name" defaultValue="John Doe" className="mt-1" />
             </div>
             <div>
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+              <Label htmlFor="email" className="text-sm font-medium">Email</Label>
               <Input id="email" type="email" defaultValue="john.doe@email.com" className="mt-1" />
             </div>
             <div>
-              <Label htmlFor="phone" className="text-sm font-medium text-gray-700">Phone</Label>
+              <Label htmlFor="phone" className="text-sm font-medium">Phone</Label>
               <Input id="phone" defaultValue="+1 (555) 123-4567" className="mt-1" />
             </div>
             <Button className="w-full md:w-auto">Save Changes</Button>
@@ -127,7 +128,7 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="language" className="text-sm font-medium text-gray-700">Language</Label>
+              <Label htmlFor="language" className="text-sm font-medium">Language</Label>
               <Select defaultValue="english">
                 <SelectTrigger id="language" className="mt-1">
                   <SelectValue />
@@ -140,7 +141,7 @@ export default function Settings() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="template" className="text-sm font-medium text-gray-700">Default Template</Label>
+              <Label htmlFor="template" className="text-sm font-medium">Default Template</Label>
               <Select defaultValue="professional">
                 <SelectTrigger id="template" className="mt-1">
                   <SelectValue />
@@ -153,7 +154,7 @@ export default function Settings() {
               </Select>
             </div>
             <div>
-              <Label htmlFor="export" className="text-sm font-medium text-gray-700">Export Format</Label>
+              <Label htmlFor="export" className="text-sm font-medium">Export Format</Label>
               <Select defaultValue="pdf">
                 <SelectTrigger id="export" className="mt-1">
                   <SelectValue />
@@ -181,15 +182,15 @@ export default function Settings() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-900">Email Notifications</p>
-                <p className="text-sm text-gray-500">Receive updates about your resumes</p>
+                <p className="font-medium">Email Notifications</p>
+                <p className="text-sm text-muted-foreground">Receive updates about your resumes</p>
               </div>
               <Switch checked={notifications} onCheckedChange={setNotifications} />
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-gray-900">Auto-save</p>
-                <p className="text-sm text-gray-500">Automatically save changes</p>
+                <p className="font-medium">Auto-save</p>
+                <p className="text-sm text-muted-foreground">Automatically save changes</p>
               </div>
               <Switch checked={autoSave} onCheckedChange={setAutoSave} />
             </div>
@@ -201,8 +202,8 @@ export default function Settings() {
                   <Sun className="w-5 h-5 text-primary" />
                 )}
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">Dark Mode</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Toggle dark/light theme</p>
+                  <p className="font-medium">Dark Mode</p>
+                  <p className="text-sm text-muted-foreground">Toggle dark/light theme</p>
                 </div>
               </div>
               <Switch checked={darkMode} onCheckedChange={toggleDarkMode} />
@@ -213,26 +214,32 @@ export default function Settings() {
         {/* Quick Actions */}
         <Card className="mb-6">
           <CardContent className="p-0">
-            <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-200">
+            <button className="w-full flex items-center justify-between p-4 hover:bg-accent transition-colors border-b">
               <div className="flex items-center gap-3">
-                <Download className="w-5 h-5 text-gray-600" />
-                <span className="font-medium text-gray-900">Export All Data</span>
+                <Download className="w-5 h-5" />
+                <span className="font-medium">Export All Data</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
-            <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-200">
+            <button 
+              onClick={() => window.location.href = createPageUrl('Privacy')}
+              className="w-full flex items-center justify-between p-4 hover:bg-accent transition-colors border-b"
+            >
               <div className="flex items-center gap-3">
-                <Lock className="w-5 h-5 text-gray-600" />
-                <span className="font-medium text-gray-900">Privacy & Security</span>
+                <Lock className="w-5 h-5" />
+                <span className="font-medium">Privacy & Security</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
-            <button className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+            <button 
+              onClick={() => window.location.href = createPageUrl('Help')}
+              className="w-full flex items-center justify-between p-4 hover:bg-accent transition-colors"
+            >
               <div className="flex items-center gap-3">
-                <HelpCircle className="w-5 h-5 text-gray-600" />
-                <span className="font-medium text-gray-900">Help & Support</span>
+                <HelpCircle className="w-5 h-5" />
+                <span className="font-medium">Help & Support</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
           </CardContent>
         </Card>
