@@ -13,6 +13,8 @@ import QuickAITools from '@/components/ai/QuickAITools';
 import EnhancedJobTracker from '@/components/jobs/EnhancedJobTracker';
 import LinkedInResumeCreator from '@/components/ai/LinkedInResumeCreator';
 import JobApplicationAssistant from '@/components/ai/JobApplicationAssistant';
+import InterviewPreparation from '@/components/ai/InterviewPreparation';
+import JobMatchingSystem from '@/components/ai/JobMatchingSystem';
 import JobNotifications from '@/components/jobs/JobNotifications';
 import JobApplicationTips from '@/components/jobs/JobApplicationTips';
 import CustomJobAlerts from '@/components/jobs/CustomJobAlerts';
@@ -216,6 +218,19 @@ export default function Dashboard() {
         {resumes.length > 0 && (
           <div className="mb-8">
             <JobApplicationAssistant resumeData={resumes[0]} />
+          </div>
+        )}
+
+        {/* Interview Preparation & Job Matching */}
+        {resumes.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">
+              Interview Prep & Job Search
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2">
+              <InterviewPreparation resumeData={resumes[0]} />
+              <JobMatchingSystem resumeData={resumes[0]} />
+            </div>
           </div>
         )}
 

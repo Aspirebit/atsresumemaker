@@ -50,14 +50,14 @@
 import Dashboard from './pages/Dashboard';
 import Editor from './pages/Editor';
 import Help from './pages/Help';
+import Pricing from './pages/Pricing';
 import Privacy from './pages/Privacy';
+import Profile from './pages/Profile';
+import Resources from './pages/Resources';
 import Saved from './pages/Saved';
 import Settings from './pages/Settings';
 import SharedResume from './pages/SharedResume';
 import TemplateMarketplace from './pages/TemplateMarketplace';
-import Pricing from './pages/Pricing';
-import Profile from './pages/Profile';
-import Resources from './pages/Resources';
 import __Layout from './Layout.jsx';
 
 
@@ -65,14 +65,14 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Editor": Editor,
     "Help": Help,
+    "Pricing": Pricing,
     "Privacy": Privacy,
+    "Profile": Profile,
+    "Resources": Resources,
     "Saved": Saved,
     "Settings": Settings,
     "SharedResume": SharedResume,
     "TemplateMarketplace": TemplateMarketplace,
-    "Pricing": Pricing,
-    "Profile": Profile,
-    "Resources": Resources,
 }
 
 export const pagesConfig = {
