@@ -12,6 +12,7 @@ import CoverLetterGenerator from '@/components/ai/CoverLetterGenerator';
 import QuickAITools from '@/components/ai/QuickAITools';
 import EnhancedJobTracker from '@/components/jobs/EnhancedJobTracker';
 import LinkedInResumeCreator from '@/components/ai/LinkedInResumeCreator';
+import JobApplicationAssistant from '@/components/ai/JobApplicationAssistant';
 import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
 import ModernTemplate from '@/components/resume/templates/ModernTemplate';
 import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
@@ -163,6 +164,13 @@ export default function Dashboard() {
           </h2>
           <EnhancedJobTracker />
         </div>
+
+        {/* Job Application Assistant */}
+        {resumes.length > 0 && (
+          <div className="mb-8">
+            <JobApplicationAssistant resumeData={resumes[0]} />
+          </div>
+        )}
 
 
 
