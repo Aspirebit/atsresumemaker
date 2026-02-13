@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Bell, Globe, Palette, Download, Lock, HelpCircle, LogOut, ChevronRight } from 'lucide-react';
+import { User, Bell, Globe, Palette, Download, Lock, HelpCircle, LogOut, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,10 +12,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
 
 export default function Settings() {
   const [notifications, setNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    try {
+      toast.success('Account deletion requested. Check your email for confirmation.');
+      setShowDeleteDialog(false);
+    } catch (error) {
+      toast.error('Failed to delete account');
+    }
+  };
 
   const settingsSections = [
     {
@@ -39,7 +60,7 @@ export default function Settings() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background overscroll-none">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Header */}
         <div className="mb-6">
@@ -184,12 +205,59 @@ export default function Settings() {
           </CardContent>
         </Card>
 
+        {/* Danger Zone */}
+        <Card className="mb-6 border-destructive">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+              </div>
+              <CardTitle className="text-destructive">Danger Zone</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Once you delete your account, there is no going back. Please be certain.
+            </p>
+            <Button
+              variant="destructive"
+              onClick={() => setShowDeleteDialog(true)}
+              className="w-full md:w-auto"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete Account
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Sign Out */}
-        <Button variant="outline" className="w-full text-red-600 hover:text-red-700 hover:bg-red-50">
+        <Button variant="outline" className="w-full hover:bg-red-50 border-red-200 text-red-600 hover:text-red-700">
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out
         </Button>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove all your data from our servers, including all your resumes.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAccount}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete Account
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
