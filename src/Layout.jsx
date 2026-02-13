@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, Settings, Menu, Sparkles, Store } from 'lucide-react';
+import { Home, FileText, Settings, Menu, Sparkles, Store, User, BookOpen } from 'lucide-react';
 import { createPageUrl } from './utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -14,17 +14,15 @@ export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const navItems = [
-    { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
-    { name: 'Saved', path: createPageUrl('Saved'), icon: FileText },
-    { name: 'Marketplace', path: createPageUrl('TemplateMarketplace'), icon: Store },
-    { name: 'Settings', path: createPageUrl('Settings'), icon: Settings },
+    { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home, pageName: 'Dashboard' },
+    { name: 'Saved', path: createPageUrl('Saved'), icon: FileText, pageName: 'Saved' },
+    { name: 'Marketplace', path: createPageUrl('TemplateMarketplace'), icon: Store, pageName: 'TemplateMarketplace' },
+    { name: 'Resources', path: createPageUrl('Resources'), icon: BookOpen, pageName: 'Resources' },
+    { name: 'Profile', path: createPageUrl('Profile'), icon: User, pageName: 'Profile' },
+    { name: 'Settings', path: createPageUrl('Settings'), icon: Settings, pageName: 'Settings' },
   ];
 
-  const topMenuItems = [
-    { name: 'Resources', path: createPageUrl('Resources') }
-  ];
-
-  const isActive = (pageName) => currentPageName === pageName;
+  const isActive = (item) => currentPageName === item.pageName;
 
   // Save scroll position when navigating away
   useEffect(() => {
@@ -111,23 +109,13 @@ export default function Layout({ children, currentPageName }) {
               <p className="text-xs text-slate-400">AI-Powered Career Tools</p>
             </div>
           </div>
-          <div className="mt-3 flex gap-2">
-            {topMenuItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 transition-colors border border-blue-500/30"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+
         </div>
         
         <nav className="flex-1 p-4">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const active = isActive(item.name);
+            const active = isActive(item);
             return (
               <Link
                 key={item.name}
@@ -178,7 +166,7 @@ export default function Layout({ children, currentPageName }) {
             <nav className="p-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
-                const active = isActive(item.name);
+                const active = isActive(item);
                 return (
                   <Link
                     key={item.name}
@@ -218,9 +206,9 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 z-10 safe-bottom shadow-lg">
         <div className="grid grid-cols-4 gap-1 px-2 py-2">
-          {navItems.map((item) => {
+          {navItems.slice(0, 4).map((item) => {
             const Icon = item.icon;
-            const active = isActive(item.name);
+            const active = isActive(item);
             return (
               <Link
                 key={item.name}
