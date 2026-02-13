@@ -10,7 +10,8 @@ import TemplateGallery from '@/components/dashboard/TemplateGallery';
 import AIWorkflow from '@/components/ai/AIWorkflow';
 import CoverLetterGenerator from '@/components/ai/CoverLetterGenerator';
 import QuickAITools from '@/components/ai/QuickAITools';
-import JobTracker from '@/components/jobs/JobTracker';
+import EnhancedJobTracker from '@/components/jobs/EnhancedJobTracker';
+import LinkedInResumeCreator from '@/components/ai/LinkedInResumeCreator';
 import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
 import ModernTemplate from '@/components/resume/templates/ModernTemplate';
 import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
@@ -101,19 +102,22 @@ export default function Dashboard() {
         {/* AI Tools */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">AI Tools</h2>
-          <QuickAITools onCoverLetterClick={() => {
-            if (resumes.length > 0) {
-              setSelectedResume(resumes[0]);
-              setShowCoverLetter(true);
-            } else {
-              toast.error('Create a resume first');
-            }
-          }} />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <QuickAITools onCoverLetterClick={() => {
+              if (resumes.length > 0) {
+                setSelectedResume(resumes[0]);
+                setShowCoverLetter(true);
+              } else {
+                toast.error('Create a resume first');
+              }
+            }} />
+            <LinkedInResumeCreator />
+          </div>
         </div>
 
-        {/* Job Applications */}
+        {/* Job Applications & Interviews */}
         <div className="mb-8">
-          <JobTracker />
+          <EnhancedJobTracker />
         </div>
 
         {/* Quick Actions */}

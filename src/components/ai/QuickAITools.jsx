@@ -97,7 +97,7 @@ Return:
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <>
       <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={onCoverLetterClick}>
         <CardContent className="p-6">
           <div className="flex flex-col items-center text-center">

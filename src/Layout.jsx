@@ -11,6 +11,7 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const contentRef = useRef(null);
   const [restoringScroll, setRestoringScroll] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const navItems = [
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
@@ -125,11 +126,48 @@ export default function Layout({ children, currentPageName }) {
       <header className="md:hidden fixed top-0 left-0 right-0 bg-card border-b border-border z-10 safe-top">
         <div className="flex items-center justify-between px-4 py-3">
           <h1 className="text-xl font-bold text-foreground">Resume Builder</h1>
-          <button className="p-2 hover:bg-accent rounded-lg touch-target select-none">
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 hover:bg-accent rounded-lg touch-target select-none"
+          >
             <Menu className="w-6 h-6 text-foreground" />
           </button>
         </div>
       </header>
+
+      {/* Mobile Menu Dropdown */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="md:hidden fixed top-14 left-0 right-0 bg-card border-b border-border z-20 safe-top"
+          >
+            <nav className="p-2">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.name);
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-colors ${
+                      active
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-foreground hover:bg-accent'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Content */}
       <main ref={contentRef} className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0 h-screen overflow-auto">
