@@ -18,7 +18,7 @@ import AIOutput from '@/components/ai/AIOutput';
 import ShareDialog from '@/components/collaboration/ShareDialog';
 import CommentsPanel from '@/components/collaboration/CommentsPanel';
 import ChangeHistory from '@/components/collaboration/ChangeHistory';
-import TemplateCustomizer from '@/components/customization/TemplateCustomizer';
+import TemplateCustomizer from '@/components/customization/TemplateCustomizer.jsx';
 
 export default function Editor() {
   const [searchParams] = useSearchParams();
