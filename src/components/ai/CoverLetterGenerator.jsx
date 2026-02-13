@@ -21,36 +21,97 @@ export default function CoverLetterGenerator({ resumeData }) {
 
     setGenerating(true);
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Generate a professional cover letter based on:
+      // First, analyze the job description for keywords and requirements
+      const analysisResponse = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this job description and extract key information:
 
 JOB DESCRIPTION:
 ${jobDescription}
 
-RESUME SUMMARY:
-Name: ${resumeData.contact?.fullName}
-Summary: ${resumeData.summary}
-Experience: ${resumeData.experience?.map(e => `${e.position} at ${e.company}`).join(', ')}
-Skills: ${resumeData.skills?.join(', ')}
+Extract and return a JSON object with:
+1. requiredSkills: array of technical skills required
+2. preferredSkills: array of nice-to-have skills
+3. keyResponsibilities: array of main job duties
+4. companyValues: array of company culture/values mentioned
+5. experienceLevel: seniority level (entry/mid/senior)
+6. keywords: array of important keywords to emphasize`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            requiredSkills: { type: "array", items: { type: "string" } },
+            preferredSkills: { type: "array", items: { type: "string" } },
+            keyResponsibilities: { type: "array", items: { type: "string" } },
+            companyValues: { type: "array", items: { type: "string" } },
+            experienceLevel: { type: "string" },
+            keywords: { type: "array", items: { type: "string" } }
+          }
+        }
+      });
 
-KEY POINTS TO HIGHLIGHT:
-${keyPoints || 'Focus on most relevant experience and skills'}
+      // Match resume data with job requirements
+      const resumeExperience = resumeData.experience?.map(e => 
+        `${e.position} at ${e.company} (${e.startDate} - ${e.endDate || 'Present'}): ${e.description}`
+      ).join('\n') || 'No experience listed';
 
-Write a compelling cover letter that:
-1. Opens with enthusiasm for the specific role
-2. Highlights 2-3 relevant achievements from the resume
-3. Connects skills to job requirements
-4. Shows understanding of the company/role
-5. Closes with a strong call to action
-6. Maintains a professional yet personable tone
-7. Keeps it to 3-4 paragraphs
+      const resumeEducation = resumeData.education?.map(e => 
+        `${e.degree} in ${e.field} from ${e.school} (${e.startDate} - ${e.endDate})`
+      ).join('\n') || 'No education listed';
 
-Format with proper business letter structure (no addresses needed, just date and greeting).`,
+      const resumeProjects = resumeData.projects?.map(p => 
+        `${p.name}: ${p.description}${p.link ? ` (${p.link})` : ''}`
+      ).join('\n') || '';
+
+      // Generate tailored cover letter
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Generate a highly tailored professional cover letter using this analysis:
+
+JOB ANALYSIS:
+Required Skills: ${analysisResponse.requiredSkills?.join(', ')}
+Preferred Skills: ${analysisResponse.preferredSkills?.join(', ')}
+Key Responsibilities: ${analysisResponse.keyResponsibilities?.join(', ')}
+Company Values: ${analysisResponse.companyValues?.join(', ')}
+Experience Level: ${analysisResponse.experienceLevel}
+Important Keywords: ${analysisResponse.keywords?.join(', ')}
+
+CANDIDATE INFORMATION:
+Name: ${resumeData.contact?.fullName || 'Candidate'}
+Email: ${resumeData.contact?.email || ''}
+Phone: ${resumeData.contact?.phone || ''}
+Location: ${resumeData.contact?.location || ''}
+
+Professional Summary: ${resumeData.summary || 'No summary provided'}
+
+Experience:
+${resumeExperience}
+
+Education:
+${resumeEducation}
+
+Skills: ${resumeData.skills?.join(', ') || 'No skills listed'}
+
+${resumeProjects ? `Projects:\n${resumeProjects}` : ''}
+
+KEY POINTS TO EMPHASIZE:
+${keyPoints || 'Match the candidate\'s strongest skills and experience to the job requirements'}
+
+INSTRUCTIONS:
+1. Analyze which of the candidate's skills and experiences best match the job requirements
+2. Open with specific enthusiasm about the role/company, mentioning why it's a good fit
+3. In the body paragraphs, highlight 2-3 specific achievements that align with job responsibilities
+4. Use the important keywords naturally throughout the letter
+5. Connect the candidate's experience to the company values if mentioned
+6. Show understanding of the role's challenges and how the candidate can address them
+7. Close with confidence and clear call to action for next steps
+8. Maintain professional yet personable tone appropriate for the experience level
+9. Keep to 3-4 well-structured paragraphs (350-400 words)
+10. Format as a business letter with proper date and salutation
+
+Start with today's date, then "Dear Hiring Manager," (or use company name if mentioned in job description).`,
         add_context_from_internet: false
       });
 
       setCoverLetter(response);
-      toast.success('Cover letter generated!');
+      toast.success('Cover letter generated with keyword optimization!');
     } catch (error) {
       console.error('Generation error:', error);
       toast.error('Failed to generate cover letter');

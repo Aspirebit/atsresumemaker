@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, FileText, Settings, Menu } from 'lucide-react';
 import { createPageUrl } from './utils';
@@ -10,6 +10,7 @@ const tabState = {};
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const contentRef = useRef(null);
+  const [restoringScroll, setRestoringScroll] = useState(false);
   
   const navItems = [
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
@@ -22,7 +23,7 @@ export default function Layout({ children, currentPageName }) {
 
   // Save scroll position when navigating away
   useEffect(() => {
-    return () => {
+    const saveScrollPosition = () => {
       if (contentRef.current) {
         tabState[currentPageName] = {
           scrollY: contentRef.current.scrollTop,
@@ -30,16 +31,62 @@ export default function Layout({ children, currentPageName }) {
         };
       }
     };
-  }, [currentPageName]);
+
+    // Save on scroll as well for real-time updates
+    const handleScroll = () => {
+      if (contentRef.current && !restoringScroll) {
+        tabState[currentPageName] = {
+          scrollY: contentRef.current.scrollTop,
+          timestamp: Date.now()
+        };
+      }
+    };
+
+    const element = contentRef.current;
+    if (element) {
+      element.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    return () => {
+      saveScrollPosition();
+      if (element) {
+        element.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [currentPageName, restoringScroll]);
 
   // Restore scroll position when navigating back
   useEffect(() => {
     if (tabState[currentPageName] && contentRef.current) {
-      setTimeout(() => {
-        if (contentRef.current) {
-          contentRef.current.scrollTop = tabState[currentPageName].scrollY;
-        }
-      }, 50);
+      setRestoringScroll(true);
+      
+      // Try immediate restoration
+      contentRef.current.scrollTop = tabState[currentPageName].scrollY;
+      
+      // Also try after a short delay for content that loads asynchronously
+      const timeouts = [10, 50, 100, 200].map(delay =>
+        setTimeout(() => {
+          if (contentRef.current) {
+            contentRef.current.scrollTop = tabState[currentPageName].scrollY;
+          }
+        }, delay)
+      );
+
+      // Allow scrolling after 300ms
+      const restoreTimeout = setTimeout(() => {
+        setRestoringScroll(false);
+      }, 300);
+
+      return () => {
+        timeouts.forEach(clearTimeout);
+        clearTimeout(restoreTimeout);
+      };
+    } else {
+      // Reset to top if no saved state
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+      setRestoringScroll(false);
     }
   }, [currentPageName]);
 

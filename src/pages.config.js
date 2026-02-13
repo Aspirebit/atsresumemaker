@@ -48,23 +48,23 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import Dashboard from './pages/Dashboard';
+import Editor from './pages/Editor';
+import Help from './pages/Help';
+import Privacy from './pages/Privacy';
 import Saved from './pages/Saved';
 import Settings from './pages/Settings';
-import Editor from './pages/Editor';
 import TemplateMarketplace from './pages/TemplateMarketplace';
-import Privacy from './pages/Privacy';
-import Help from './pages/Help';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Dashboard": Dashboard,
+    "Editor": Editor,
+    "Help": Help,
+    "Privacy": Privacy,
     "Saved": Saved,
     "Settings": Settings,
-    "Editor": Editor,
     "TemplateMarketplace": TemplateMarketplace,
-    "Privacy": Privacy,
-    "Help": Help,
 }
 
 export const pagesConfig = {
