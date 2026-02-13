@@ -5,6 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 import TemplateGallery from '@/components/dashboard/TemplateGallery';
 import AIWorkflow from '@/components/ai/AIWorkflow';
+import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
+import ModernTemplate from '@/components/resume/templates/ModernTemplate';
+import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
+import MinimalistTemplate from '@/components/resume/templates/MinimalistTemplate';
+import ExecutiveTemplate from '@/components/resume/templates/ExecutiveTemplate';
 
 export default function Dashboard() {
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
@@ -28,12 +33,43 @@ export default function Dashboard() {
   };
 
   const templates = [
-    { id: 'professional', name: 'Professional', color: 'bg-blue-500', popular: true },
-    { id: 'modern', name: 'Modern', color: 'bg-gradient-to-br from-purple-500 to-blue-500', popular: true },
-    { id: 'creative', name: 'Creative', color: 'bg-gradient-to-br from-pink-500 to-orange-500', popular: false },
-    { id: 'minimalist', name: 'Minimalist', color: 'bg-gray-700', popular: false },
-    { id: 'executive', name: 'Executive', color: 'bg-gray-900', popular: true },
+    { id: 'professional', name: 'Professional', component: ProfessionalTemplate, popular: true },
+    { id: 'modern', name: 'Modern', component: ModernTemplate, popular: true },
+    { id: 'creative', name: 'Creative', component: CreativeTemplate, popular: false },
+    { id: 'minimalist', name: 'Minimalist', component: MinimalistTemplate, popular: false },
+    { id: 'executive', name: 'Executive', component: ExecutiveTemplate, popular: true },
   ];
+
+  const sampleData = {
+    template: 'professional',
+    contact: {
+      fullName: 'John Doe',
+      email: 'john.doe@email.com',
+      phone: '+1 (555) 123-4567',
+      location: 'New York, NY',
+    },
+    summary: 'Experienced professional with a proven track record in delivering exceptional results.',
+    experience: [
+      {
+        position: 'Senior Developer',
+        company: 'Tech Corp',
+        startDate: 'Jan 2020',
+        endDate: 'Present',
+        current: true,
+        description: 'Led development of key features and mentored junior developers.',
+      },
+    ],
+    education: [
+      {
+        degree: 'Bachelor of Science',
+        field: 'Computer Science',
+        school: 'University Name',
+        startDate: '2015',
+        endDate: '2019',
+      },
+    ],
+    skills: ['JavaScript', 'React', 'Node.js', 'Python'],
+  };
 
   const getTimeAgo = (date) => {
     const seconds = Math.floor((new Date() - new Date(date)) / 1000);
@@ -114,26 +150,33 @@ export default function Dashboard() {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {templates.map((template) => (
-              <Card
-                key={template.id}
-                className="hover:shadow-lg transition-shadow cursor-pointer group"
-                onClick={() => setShowTemplateGallery(true)}
-              >
-                <CardContent className="p-4">
-                  <div className={`${template.color} h-32 rounded-lg mb-3 relative`}>
-                    {template.popular && (
-                      <span className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-semibold px-2 py-1 rounded">
-                        Popular
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm group-hover:text-blue-600">
-                    {template.name}
-                  </h3>
-                </CardContent>
-              </Card>
-            ))}
+            {templates.map((template) => {
+              const TemplateComponent = template.component;
+              return (
+                <Card
+                  key={template.id}
+                  className="hover:shadow-lg transition-shadow cursor-pointer group overflow-hidden"
+                  onClick={() => setShowTemplateGallery(true)}
+                >
+                  <CardContent className="p-3">
+                    <div className="h-40 rounded-lg mb-2 relative overflow-hidden bg-white">
+                      {template.popular && (
+                        <span className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-xs font-semibold px-2 py-1 rounded z-10">
+                          Popular
+                        </span>
+                      )}
+                      <div className="scale-[0.15] origin-top-left w-[667%] h-[667%] pointer-events-none">
+                        <TemplateComponent data={{ ...sampleData, template: template.id }} />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white pointer-events-none"></div>
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-sm group-hover:text-blue-600">
+                      {template.name}
+                    </h3>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
 
