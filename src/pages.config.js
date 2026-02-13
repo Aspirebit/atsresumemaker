@@ -51,6 +51,7 @@ import Dashboard from './pages/Dashboard';
 import Saved from './pages/Saved';
 import Settings from './pages/Settings';
 import Editor from './pages/Editor';
+import TemplateMarketplace from './pages/TemplateMarketplace';
 import __Layout from './Layout.jsx';
 
 
@@ -59,6 +60,7 @@ export const PAGES = {
     "Saved": Saved,
     "Settings": Settings,
     "Editor": Editor,
+    "TemplateMarketplace": TemplateMarketplace,
 }
 
 export const pagesConfig = {

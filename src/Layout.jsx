@@ -9,6 +9,7 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
     { name: 'Saved', path: createPageUrl('Saved'), icon: FileText },
+    { name: 'Marketplace', path: createPageUrl('TemplateMarketplace'), icon: FileText },
     { name: 'Settings', path: createPageUrl('Settings'), icon: Settings },
   ];
 

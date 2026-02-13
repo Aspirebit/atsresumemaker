@@ -16,6 +16,8 @@ import { createPageUrl } from '@/utils';
 import AIAssistant from '@/components/ai/AIAssistant';
 import AIOutput from '@/components/ai/AIOutput';
 import AIProofreader from '@/components/ai/AIProofreader';
+import CoverLetterGenerator from '@/components/ai/CoverLetterGenerator';
+import AITemplateGenerator from '@/components/ai/AITemplateGenerator';
 import ShareDialog from '@/components/collaboration/ShareDialog';
 import CommentsPanel from '@/components/collaboration/CommentsPanel';
 import ChangeHistory from '@/components/collaboration/ChangeHistory';
@@ -40,6 +42,8 @@ export default function Editor() {
   const [showHistory, setShowHistory] = useState(false);
   const [showJobMatch, setShowJobMatch] = useState(false);
   const [showProofread, setShowProofread] = useState(false);
+  const [showCoverLetter, setShowCoverLetter] = useState(false);
+  const [showTemplateGen, setShowTemplateGen] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [aiOutput, setAIOutput] = useState(null);
@@ -173,6 +177,8 @@ export default function Editor() {
     setShowHistory(panel === 'history' ? !showHistory : false);
     setShowJobMatch(panel === 'jobmatch' ? !showJobMatch : false);
     setShowProofread(panel === 'proofread' ? !showProofread : false);
+    setShowCoverLetter(panel === 'coverletter' ? !showCoverLetter : false);
+    setShowTemplateGen(panel === 'templategen' ? !showTemplateGen : false);
     setShowMobileMenu(false);
   };
 
@@ -368,6 +374,16 @@ export default function Editor() {
                 <AIProofreader onApply={handleAIGenerate} />
               </div>
             )}
+            {showCoverLetter && (
+              <div className="sticky top-20">
+                <CoverLetterGenerator resumeData={resumeData} />
+              </div>
+            )}
+            {showTemplateGen && (
+              <div className="sticky top-20">
+                <AITemplateGenerator />
+              </div>
+            )}
             {showComments && resumeId && (
               <div className="sticky top-20">
                 <CommentsPanel resumeId={resumeId} />
@@ -390,7 +406,7 @@ export default function Editor() {
           </div>
 
           {/* Main Editor */}
-          <div className={`${showAI || showJobMatch || showProofread || showComments || showCustomize || showHistory ? 'lg:col-span-5' : showPreview ? 'lg:col-span-6' : 'lg:col-span-12'} space-y-4 md:space-y-6`}>
+          <div className={`${showAI || showJobMatch || showProofread || showCoverLetter || showTemplateGen || showComments || showCustomize || showHistory ? 'lg:col-span-5' : showPreview ? 'lg:col-span-6' : 'lg:col-span-12'} space-y-4 md:space-y-6`}>
             {aiOutput && (
               <AIOutput
                 content={aiOutput.content}
@@ -430,7 +446,7 @@ export default function Editor() {
 
           {/* Right Sidebar - Preview */}
           {showPreview && (
-            <div className={`${showAI || showJobMatch || showProofread || showComments || showCustomize || showHistory ? 'lg:col-span-4' : 'lg:col-span-6'} hidden lg:block`}>
+            <div className={`${showAI || showJobMatch || showProofread || showCoverLetter || showTemplateGen || showComments || showCustomize || showHistory ? 'lg:col-span-4' : 'lg:col-span-6'} hidden lg:block`}>
               <div className="sticky top-20">
                 <ResumePreview data={resumeData} />
               </div>
