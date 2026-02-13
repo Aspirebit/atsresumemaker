@@ -208,7 +208,17 @@ export default function Editor() {
               <input
                 type="text"
                 value={resumeData.title}
-                onChange={(e) => updateResumeData('title', e.target.value)}
+                onChange={(e) => {
+                  const newTitle = e.target.value;
+                  updateResumeData('title', newTitle);
+                  // Optimistic auto-save after 1 second of no typing
+                  if (window.autoSaveTimeout) clearTimeout(window.autoSaveTimeout);
+                  window.autoSaveTimeout = setTimeout(() => {
+                    if (resumeId) {
+                      base44.entities.Resume.update(resumeId, { ...resumeData, title: newTitle });
+                    }
+                  }, 1000);
+                }}
                 className="text-lg md:text-xl font-semibold text-gray-900 bg-transparent border-none focus:outline-none focus:ring-0 min-w-0 flex-1"
               />
             </div>
@@ -245,6 +255,14 @@ export default function Editor() {
                 >
                   <FileCheck className="w-4 h-4 mr-2" />
                   Proofread
+                </Button>
+                <Button
+                  variant={showCoverLetter ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => togglePanel('coverletter')}
+                >
+                  <FileText className="w-4 h-4 mr-2" />
+                  Cover Letter
                 </Button>
                 <Button
                   variant={showComments ? 'default' : 'outline'}

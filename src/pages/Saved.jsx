@@ -19,6 +19,7 @@ import ModernTemplate from '@/components/resume/templates/ModernTemplate';
 import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
 import MinimalistTemplate from '@/components/resume/templates/MinimalistTemplate';
 import ExecutiveTemplate from '@/components/resume/templates/ExecutiveTemplate';
+import PullToRefresh from '@/components/mobile/PullToRefresh';
 
 export default function Saved() {
   const navigate = useNavigate();
@@ -61,25 +62,44 @@ export default function Saved() {
 
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this resume?')) return;
+    
+    // Optimistic update
+    const originalResumes = [...resumes];
+    setResumes(resumes.filter(r => r.id !== id));
+    toast.success('Resume deleted');
+    
     try {
       await base44.entities.Resume.delete(id);
-      setResumes(resumes.filter(r => r.id !== id));
-      toast.success('Resume deleted');
     } catch (error) {
+      // Rollback on error
+      setResumes(originalResumes);
       toast.error('Failed to delete resume');
     }
   };
 
   const handleDuplicate = async (resume) => {
+    const { id, created_date, updated_date, ...data } = resume;
+    const tempId = 'temp-' + Date.now();
+    const optimisticResume = {
+      ...data,
+      id: tempId,
+      title: `${data.title} (Copy)`,
+      created_date: new Date().toISOString(),
+      updated_date: new Date().toISOString()
+    };
+    
+    // Optimistic update
+    setResumes([optimisticResume, ...resumes]);
+    toast.success('Resume duplicated');
+    
     try {
-      const { id, created_date, updated_date, ...data } = resume;
       const duplicated = await base44.entities.Resume.create({
         ...data,
         title: `${data.title} (Copy)`
       });
-      setResumes([duplicated, ...resumes]);
-      toast.success('Resume duplicated');
+      setResumes(prev => prev.map(r => r.id === tempId ? duplicated : r));
     } catch (error) {
+      setResumes(prev => prev.filter(r => r.id !== tempId));
       toast.error('Failed to duplicate resume');
     }
   };
@@ -95,9 +115,15 @@ export default function Saved() {
     resume.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleRefresh = async () => {
+    await loadResumes();
+    toast.success('Refreshed');
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
@@ -252,7 +278,8 @@ export default function Saved() {
                     })}
                     </div>
         )}
+        </div>
       </div>
-    </div>
+    </PullToRefresh>
   );
 }

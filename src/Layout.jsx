@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, FileText, Settings, Menu } from 'lucide-react';
 import { createPageUrl } from './utils';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Store scroll positions and state for each tab
+const tabState = {};
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const contentRef = useRef(null);
   
   const navItems = [
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
@@ -14,6 +19,29 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const isActive = (pageName) => currentPageName === pageName;
+
+  // Save scroll position when navigating away
+  useEffect(() => {
+    return () => {
+      if (contentRef.current) {
+        tabState[currentPageName] = {
+          scrollY: contentRef.current.scrollTop,
+          timestamp: Date.now()
+        };
+      }
+    };
+  }, [currentPageName]);
+
+  // Restore scroll position when navigating back
+  useEffect(() => {
+    if (tabState[currentPageName] && contentRef.current) {
+      setTimeout(() => {
+        if (contentRef.current) {
+          contentRef.current.scrollTop = tabState[currentPageName].scrollY;
+        }
+      }, 50);
+    }
+  }, [currentPageName]);
 
   return (
     <div className="min-h-screen bg-background overscroll-none">
@@ -57,8 +85,18 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Main Content */}
-      <main className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0">
-        {children}
+      <main ref={contentRef} className="md:ml-64 pt-16 md:pt-0 pb-20 md:pb-0 h-screen overflow-auto">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ x: 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -300, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Mobile Bottom Navigation */}

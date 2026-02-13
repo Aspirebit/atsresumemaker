@@ -120,8 +120,9 @@ export default function TemplateMarketplace() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-6">
-      <div className="max-w-7xl mx-auto">
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen bg-background p-4 md:p-6">
+        <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
             <Store className="w-6 h-6 md:w-8 md:h-8 text-primary" />
