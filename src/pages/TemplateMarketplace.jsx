@@ -298,8 +298,9 @@ export default function TemplateMarketplace() {
           onClose={() => setShowUploadDialog(false)}
           onUploaded={loadTemplates}
         />
+        </div>
       </div>
-    </div>
+    </PullToRefresh>
   );
 }
 
