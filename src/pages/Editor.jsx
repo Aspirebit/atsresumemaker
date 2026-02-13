@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Save, Eye, EyeOff, Share2, MessageSquare, Sparkles, Palette, History, Menu, X, Target } from 'lucide-react';
+import { ArrowLeft, Download, Save, Eye, EyeOff, Share2, MessageSquare, Sparkles, Palette, History, Menu, X, Target, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
@@ -15,9 +15,11 @@ import { exportResumeToPDF } from '@/components/utils/pdfExport';
 import { createPageUrl } from '@/utils';
 import AIAssistant from '@/components/ai/AIAssistant';
 import AIOutput from '@/components/ai/AIOutput';
+import AIProofreader from '@/components/ai/AIProofreader';
 import ShareDialog from '@/components/collaboration/ShareDialog';
 import CommentsPanel from '@/components/collaboration/CommentsPanel';
 import ChangeHistory from '@/components/collaboration/ChangeHistory';
+import PresenceIndicators from '@/components/collaboration/PresenceIndicators';
 import TemplateCustomizer from '@/components/customization/TemplateCustomizer.jsx';
 import AdvancedCustomizer from '@/components/customization/AdvancedCustomizer';
 import JobMatchAnalyzer from '@/components/ai/JobMatchAnalyzer';
@@ -37,6 +39,7 @@ export default function Editor() {
   const [showCustomize, setShowCustomize] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showJobMatch, setShowJobMatch] = useState(false);
+  const [showProofread, setShowProofread] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [aiOutput, setAIOutput] = useState(null);
@@ -169,6 +172,7 @@ export default function Editor() {
     setShowCustomize(panel === 'customize' ? !showCustomize : false);
     setShowHistory(panel === 'history' ? !showHistory : false);
     setShowJobMatch(panel === 'jobmatch' ? !showJobMatch : false);
+    setShowProofread(panel === 'proofread' ? !showProofread : false);
     setShowMobileMenu(false);
   };
 
@@ -178,9 +182,9 @@ export default function Editor() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background overscroll-none">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-20">
+      <div className="bg-card border-b border-border sticky top-0 z-20 safe-top">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -226,6 +230,14 @@ export default function Editor() {
                   Match
                 </Button>
                 <Button
+                  variant={showProofread ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => togglePanel('proofread')}
+                >
+                  <FileCheck className="w-4 h-4 mr-2" />
+                  Proofread
+                </Button>
+                <Button
                   variant={showComments ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => togglePanel('comments')}
@@ -233,6 +245,7 @@ export default function Editor() {
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Comments
                 </Button>
+                {resumeId && <PresenceIndicators resumeId={resumeId} />}
                 <Button
                   variant={showCustomize ? 'default' : 'outline'}
                   size="sm"
@@ -350,6 +363,11 @@ export default function Editor() {
                 />
               </div>
             )}
+            {showProofread && (
+              <div className="sticky top-20">
+                <AIProofreader onApply={handleAIGenerate} />
+              </div>
+            )}
             {showComments && resumeId && (
               <div className="sticky top-20">
                 <CommentsPanel resumeId={resumeId} />
@@ -372,7 +390,7 @@ export default function Editor() {
           </div>
 
           {/* Main Editor */}
-          <div className={`${showAI || showJobMatch || showComments || showCustomize || showHistory ? 'lg:col-span-5' : showPreview ? 'lg:col-span-6' : 'lg:col-span-12'} space-y-4 md:space-y-6`}>
+          <div className={`${showAI || showJobMatch || showProofread || showComments || showCustomize || showHistory ? 'lg:col-span-5' : showPreview ? 'lg:col-span-6' : 'lg:col-span-12'} space-y-4 md:space-y-6`}>
             {aiOutput && (
               <AIOutput
                 content={aiOutput.content}
@@ -412,7 +430,7 @@ export default function Editor() {
 
           {/* Right Sidebar - Preview */}
           {showPreview && (
-            <div className={`${showAI || showJobMatch || showComments || showCustomize || showHistory ? 'lg:col-span-4' : 'lg:col-span-6'} hidden lg:block`}>
+            <div className={`${showAI || showJobMatch || showProofread || showComments || showCustomize || showHistory ? 'lg:col-span-4' : 'lg:col-span-6'} hidden lg:block`}>
               <div className="sticky top-20">
                 <ResumePreview data={resumeData} />
               </div>

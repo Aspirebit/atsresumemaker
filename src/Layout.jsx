@@ -15,12 +15,12 @@ export default function Layout({ children, currentPageName }) {
   const isActive = (pageName) => currentPageName === pageName;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background overscroll-none">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex-col">
-        <div className="p-6 border-b border-gray-200">
-          <h1 className="text-2xl font-bold text-gray-900">Resume Builder</h1>
-          <p className="text-sm text-gray-500 mt-1">Create your perfect resume</p>
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-card border-r border-border flex-col">
+        <div className="p-6 border-b border-border">
+          <h1 className="text-2xl font-bold text-foreground">Resume Builder</h1>
+          <p className="text-sm text-muted-foreground mt-1">Create your perfect resume</p>
         </div>
         
         <nav className="flex-1 p-4">
@@ -31,10 +31,10 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-colors select-none touch-target ${
                   active
-                    ? 'bg-blue-50 text-blue-600'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-foreground hover:bg-accent'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -46,11 +46,11 @@ export default function Layout({ children, currentPageName }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-10">
+      <header className="md:hidden fixed top-0 left-0 right-0 bg-card border-b border-border z-10 safe-top">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold text-gray-900">Resume Builder</h1>
-          <button className="p-2 hover:bg-gray-100 rounded-lg">
-            <Menu className="w-6 h-6 text-gray-700" />
+          <h1 className="text-xl font-bold text-foreground">Resume Builder</h1>
+          <button className="p-2 hover:bg-accent rounded-lg touch-target select-none">
+            <Menu className="w-6 h-6 text-foreground" />
           </button>
         </div>
       </header>
@@ -61,7 +61,7 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-10 safe-bottom">
         <div className="flex items-center justify-around px-2 py-2">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -70,8 +70,8 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors ${
-                  active ? 'text-blue-600' : 'text-gray-600'
+                className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors select-none touch-target ${
+                  active ? 'text-primary' : 'text-muted-foreground'
                 }`}
               >
                 <Icon className="w-6 h-6" />
