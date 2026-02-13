@@ -20,6 +20,10 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Settings', path: createPageUrl('Settings'), icon: Settings },
   ];
 
+  const topMenuItems = [
+    { name: 'Resources', path: createPageUrl('Resources') }
+  ];
+
   const isActive = (pageName) => currentPageName === pageName;
 
   // Save scroll position when navigating away
@@ -98,6 +102,17 @@ export default function Layout({ children, currentPageName }) {
         <div className="p-6 border-b border-border">
           <h1 className="text-2xl font-bold text-foreground">Resume Builder</h1>
           <p className="text-sm text-muted-foreground mt-1">Create your perfect resume</p>
+          <div className="mt-3 flex gap-2">
+            {topMenuItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className="text-xs px-2 py-1 rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
         </div>
         
         <nav className="flex-1 p-4">

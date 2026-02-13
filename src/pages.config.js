@@ -57,6 +57,7 @@ import SharedResume from './pages/SharedResume';
 import TemplateMarketplace from './pages/TemplateMarketplace';
 import Pricing from './pages/Pricing';
 import Profile from './pages/Profile';
+import Resources from './pages/Resources';
 import __Layout from './Layout.jsx';
 
 
@@ -71,6 +72,7 @@ export const PAGES = {
     "TemplateMarketplace": TemplateMarketplace,
     "Pricing": Pricing,
     "Profile": Profile,
+    "Resources": Resources,
 }
 
 export const pagesConfig = {
