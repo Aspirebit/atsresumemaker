@@ -234,10 +234,11 @@ export default function Saved() {
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                  </Card>
+                  );
+                  })}
+                  </div>
         )}
       </div>
     </div>

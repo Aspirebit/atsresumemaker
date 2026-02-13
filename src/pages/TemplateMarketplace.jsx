@@ -120,24 +120,24 @@ export default function TemplateMarketplace() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <Store className="w-8 h-8 text-primary" />
+            <Store className="w-6 h-6 md:w-8 md:h-8 text-primary" />
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Template Marketplace</h1>
-              <p className="text-muted-foreground">Discover and share professional resume templates</p>
+              <h1 className="text-xl md:text-3xl font-bold text-foreground">Template Marketplace</h1>
+              <p className="text-sm text-muted-foreground">Discover and share templates</p>
             </div>
           </div>
-          <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto">
             <Upload className="w-4 h-4 mr-2" />
             Upload Template
           </Button>
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-4 md:gap-4 mb-6">
           <div className="md:col-span-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -186,7 +186,7 @@ export default function TemplateMarketplace() {
             <p className="text-muted-foreground">No templates found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {filteredTemplates.map((template) => (
               <Card key={template.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                 {template.featured && (
