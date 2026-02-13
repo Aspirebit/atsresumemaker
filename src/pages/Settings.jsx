@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Bell, Globe, Palette, Download, Lock, HelpCircle, LogOut, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
+import { User, Bell, Globe, Palette, Download, Lock, HelpCircle, LogOut, ChevronRight, Trash2, AlertTriangle, Moon, Sun } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,9 @@ export default function Settings() {
   const [notifications, setNotifications] = useState(true);
   const [autoSave, setAutoSave] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [darkMode, setDarkMode] = useState(
+    document.documentElement.classList.contains('dark')
+  );
 
   const handleDeleteAccount = async () => {
     try {
@@ -35,6 +38,21 @@ export default function Settings() {
       setShowDeleteDialog(false);
     } catch (error) {
       toast.error('Failed to delete account');
+    }
+  };
+
+  const toggleDarkMode = () => {
+    const html = document.documentElement;
+    if (darkMode) {
+      html.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+      setDarkMode(false);
+      toast.success('Light mode enabled');
+    } else {
+      html.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+      setDarkMode(true);
+      toast.success('Dark mode enabled');
     }
   };
 
@@ -174,6 +192,20 @@ export default function Settings() {
                 <p className="text-sm text-gray-500">Automatically save changes</p>
               </div>
               <Switch checked={autoSave} onCheckedChange={setAutoSave} />
+            </div>
+            <div className="flex items-center justify-between pt-4 border-t">
+              <div className="flex items-center gap-3">
+                {darkMode ? (
+                  <Moon className="w-5 h-5 text-primary" />
+                ) : (
+                  <Sun className="w-5 h-5 text-primary" />
+                )}
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-gray-100">Dark Mode</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Toggle dark/light theme</p>
+                </div>
+              </div>
+              <Switch checked={darkMode} onCheckedChange={toggleDarkMode} />
             </div>
           </CardContent>
         </Card>
