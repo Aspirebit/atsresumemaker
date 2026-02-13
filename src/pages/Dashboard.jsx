@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, FileText, TrendingUp, Clock, Sparkles } from 'lucide-react';
+import { Plus, FileText, TrendingUp, Clock, Sparkles, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
@@ -7,6 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import TemplateGallery from '@/components/dashboard/TemplateGallery';
 import AIWorkflow from '@/components/ai/AIWorkflow';
+import CoverLetterGenerator from '@/components/ai/CoverLetterGenerator';
+import QuickAITools from '@/components/ai/QuickAITools';
+import JobTracker from '@/components/jobs/JobTracker';
 import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
 import ModernTemplate from '@/components/resume/templates/ModernTemplate';
 import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
@@ -17,8 +21,10 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
   const [showAIWorkflow, setShowAIWorkflow] = useState(false);
+  const [showCoverLetter, setShowCoverLetter] = useState(false);
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedResume, setSelectedResume] = useState(null);
 
   useEffect(() => {
     loadResumes();
@@ -90,6 +96,24 @@ export default function Dashboard() {
             Welcome back!
           </h1>
           <p className="text-gray-600 dark:text-muted-foreground">Create a professional resume in minutes</p>
+        </div>
+
+        {/* AI Tools */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">AI Tools</h2>
+          <QuickAITools onCoverLetterClick={() => {
+            if (resumes.length > 0) {
+              setSelectedResume(resumes[0]);
+              setShowCoverLetter(true);
+            } else {
+              toast.error('Create a resume first');
+            }
+          }} />
+        </div>
+
+        {/* Job Applications */}
+        <div className="mb-8">
+          <JobTracker />
         </div>
 
         {/* Quick Actions */}
@@ -230,6 +254,22 @@ export default function Dashboard() {
 
       <TemplateGallery open={showTemplateGallery} onClose={() => setShowTemplateGallery(false)} />
       <AIWorkflow open={showAIWorkflow} onClose={() => setShowAIWorkflow(false)} />
+      
+      {showCoverLetter && selectedResume && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-background rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold">AI Cover Letter Generator</h2>
+                <Button variant="ghost" size="icon" onClick={() => setShowCoverLetter(false)}>
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+              <CoverLetterGenerator resumeData={selectedResume} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
