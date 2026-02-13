@@ -7,6 +7,9 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import SubscriptionPlans from '@/components/subscription/SubscriptionPlans';
+import CoinPacks from '@/components/subscription/CoinPacks';
+import ReferralSystem from '@/components/referral/ReferralSystem';
 
 export default function Pricing() {
   const navigate = useNavigate();
@@ -143,6 +146,26 @@ export default function Pricing() {
             Unlock premium features and create unlimited professional resumes
           </p>
         </div>
+
+        {/* Subscription Plans */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-center mb-6">Subscription Tiers</h2>
+          <SubscriptionPlans />
+        </div>
+
+        {/* Coin Packs */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-center mb-2">Buy Coin Packs</h2>
+          <p className="text-center text-muted-foreground mb-6">Use coins for templates, AI features, and more</p>
+          <CoinPacks />
+        </div>
+
+        {/* Referral System */}
+        <div className="mb-12 max-w-xl mx-auto">
+          <ReferralSystem />
+        </div>
+
+        <h2 className="text-2xl font-bold text-center mb-8">Quick Access Plans</h2>
 
         {/* Current Subscription */}
         {subscription && (
