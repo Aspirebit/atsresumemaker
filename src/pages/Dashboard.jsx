@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, FileText, TrendingUp, Clock } from 'lucide-react';
+import { Plus, FileText, TrendingUp, Clock, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 import TemplateGallery from '@/components/dashboard/TemplateGallery';
+import AIWorkflow from '@/components/ai/AIWorkflow';
 
 export default function Dashboard() {
   const [showTemplateGallery, setShowTemplateGallery] = useState(false);
+  const [showAIWorkflow, setShowAIWorkflow] = useState(false);
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,7 +54,20 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+          <Card
+            className="border-2 border-dashed border-purple-300 bg-gradient-to-br from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 transition-colors cursor-pointer"
+            onClick={() => setShowAIWorkflow(true)}
+          >
+            <CardContent className="flex flex-col items-center justify-center py-8">
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center mb-3">
+                <Sparkles className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="font-semibold text-gray-900 text-lg">AI Resume Builder</h3>
+              <p className="text-sm text-gray-600 mt-1">Build with AI assistance</p>
+            </CardContent>
+          </Card>
+
           <Card
             className="border-2 border-dashed border-blue-300 bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer"
             onClick={() => setShowTemplateGallery(true)}
@@ -61,8 +76,8 @@ export default function Dashboard() {
               <div className="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center mb-3">
                 <Plus className="w-7 h-7 text-white" />
               </div>
-              <h3 className="font-semibold text-gray-900 text-lg">Start New Resume</h3>
-              <p className="text-sm text-gray-600 mt-1">Choose from templates</p>
+              <h3 className="font-semibold text-gray-900 text-lg">Start from Template</h3>
+              <p className="text-sm text-gray-600 mt-1">Choose and customize</p>
             </CardContent>
           </Card>
 
@@ -167,6 +182,7 @@ export default function Dashboard() {
       </div>
 
       <TemplateGallery open={showTemplateGallery} onClose={() => setShowTemplateGallery(false)} />
+      <AIWorkflow open={showAIWorkflow} onClose={() => setShowAIWorkflow(false)} />
     </div>
   );
 }
