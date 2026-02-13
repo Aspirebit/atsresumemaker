@@ -98,16 +98,25 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-background overscroll-none">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-card border-r border-border flex-col">
-        <div className="p-6 border-b border-border">
-          <h1 className="text-2xl font-bold text-foreground">Resume Builder</h1>
-          <p className="text-sm text-muted-foreground mt-1">Create your perfect resume</p>
+      <aside className="hidden md:flex fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-slate-900 to-slate-800 border-r border-slate-700 flex-col">
+        <div className="p-6 border-b border-slate-700">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+              <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">ATS Resume Builder</h1>
+              <p className="text-xs text-slate-400">AI-Powered Career Tools</p>
+            </div>
+          </div>
           <div className="mt-3 flex gap-2">
             {topMenuItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className="text-xs px-2 py-1 rounded bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                className="text-xs px-2 py-1 rounded bg-blue-500/20 text-blue-300 hover:bg-blue-500/30 transition-colors border border-blue-500/30"
               >
                 {item.name}
               </Link>
@@ -123,10 +132,10 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-colors select-none touch-target ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-2 transition-all select-none touch-target ${
                   active
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-foreground hover:bg-accent'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                    : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -138,14 +147,21 @@ export default function Layout({ children, currentPageName }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 bg-card border-b border-border z-10 safe-top">
+      <header className="md:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700 z-10 safe-top">
         <div className="flex items-center justify-between px-4 py-3">
-          <h1 className="text-xl font-bold text-foreground">Resume Builder</h1>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h1 className="text-lg font-bold text-white">ATS Resume Builder</h1>
+          </div>
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 hover:bg-accent rounded-lg touch-target select-none"
+            className="p-2 hover:bg-slate-700 rounded-lg touch-target select-none"
           >
-            <Menu className="w-6 h-6 text-foreground" />
+            <Menu className="w-6 h-6 text-white" />
           </button>
         </div>
       </header>
@@ -157,7 +173,7 @@ export default function Layout({ children, currentPageName }) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden fixed top-14 left-0 right-0 bg-card border-b border-border z-20 safe-top"
+            className="md:hidden fixed top-14 left-0 right-0 bg-slate-900 border-b border-slate-700 z-20 safe-top shadow-xl"
           >
             <nav className="p-2">
               {navItems.map((item) => {
@@ -168,10 +184,10 @@ export default function Layout({ children, currentPageName }) {
                     key={item.name}
                     to={item.path}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-colors ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-lg mb-1 transition-all ${
                       active
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-foreground hover:bg-accent'
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                        : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -200,7 +216,7 @@ export default function Layout({ children, currentPageName }) {
       </main>
 
       {/* Mobile Bottom Navigation */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-10 safe-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 z-10 safe-bottom shadow-lg">
         <div className="grid grid-cols-4 gap-1 px-2 py-2">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -209,8 +225,8 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors select-none ${
-                  active ? 'text-primary bg-primary/10' : 'text-muted-foreground'
+                className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all select-none ${
+                  active ? 'text-white bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg' : 'text-slate-400'
                 }`}
               >
                 <Icon className="w-5 h-5" />

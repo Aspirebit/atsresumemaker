@@ -132,7 +132,7 @@ export default function Dashboard() {
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
                 Welcome back, {user?.full_name || 'there'}! 👋
               </h1>
-              <p className="text-gray-600 dark:text-muted-foreground">Let's build your perfect resume</p>
+              <p className="text-gray-600 dark:text-muted-foreground">Beat ATS systems with AI-powered resumes</p>
             </div>
             {credits && (
               <div className="hidden md:flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-4 py-2 rounded-full">

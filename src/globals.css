@@ -32,28 +32,38 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 222 47% 11%;
-      --foreground: 210 40% 98%;
-      --card: 222 47% 14%;
-      --card-foreground: 210 40% 98%;
-      --popover: 222 47% 14%;
-      --popover-foreground: 210 40% 98%;
-      --primary: 217 91% 60%;
-      --primary-foreground: 222 47% 11%;
-      --secondary: 217 33% 17%;
-      --secondary-foreground: 210 40% 98%;
-      --muted: 223 47% 20%;
-      --muted-foreground: 215 20% 65%;
-      --accent: 217 33% 17%;
-      --accent-foreground: 210 40% 98%;
-      --destructive: 0 63% 31%;
-      --destructive-foreground: 210 40% 98%;
-      --border: 217 33% 23%;
-      --input: 217 33% 23%;
-      --ring: 217 91% 60%;
+      :root {
+        --background: 222 47% 11%;
+        --foreground: 210 40% 98%;
+        --card: 222 47% 14%;
+        --card-foreground: 210 40% 98%;
+        --popover: 222 47% 14%;
+        --popover-foreground: 210 40% 98%;
+        --primary: 221 83% 53%;
+        --primary-foreground: 222 47% 11%;
+        --secondary: 217 33% 17%;
+        --secondary-foreground: 210 40% 98%;
+        --muted: 223 47% 20%;
+        --muted-foreground: 215 20% 65%;
+        --accent: 217 33% 17%;
+        --accent-foreground: 210 40% 98%;
+        --destructive: 0 63% 31%;
+        --destructive-foreground: 210 40% 98%;
+        --border: 217 33% 23%;
+        --input: 217 33% 23%;
+        --ring: 221 83% 53%;
+      }
     }
-  }
+
+    /* Premium gradient backgrounds */
+    .premium-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .premium-card {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      border: 1px solid rgba(102, 126, 234, 0.2);
+    }
 
   .dark {
     --background: 222 47% 11%;
