@@ -13,6 +13,8 @@ import QuickAITools from '@/components/ai/QuickAITools';
 import EnhancedJobTracker from '@/components/jobs/EnhancedJobTracker';
 import LinkedInResumeCreator from '@/components/ai/LinkedInResumeCreator';
 import JobApplicationAssistant from '@/components/ai/JobApplicationAssistant';
+import JobNotifications from '@/components/jobs/JobNotifications';
+import JobApplicationTips from '@/components/jobs/JobApplicationTips';
 import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
 import ModernTemplate from '@/components/resume/templates/ModernTemplate';
 import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
@@ -27,17 +29,38 @@ export default function Dashboard() {
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedResume, setSelectedResume] = useState(null);
+  const [user, setUser] = useState(null);
+  const [credits, setCredits] = useState(null);
 
   useEffect(() => {
-    loadResumes();
+    loadData();
   }, []);
 
-  const loadResumes = async () => {
+  const loadData = async () => {
     try {
-      const data = await base44.entities.Resume.list('-updated_date', 3);
-      setResumes(data);
+      const [resumeData, userData] = await Promise.all([
+        base44.entities.Resume.list('-updated_date', 3),
+        base44.auth.me()
+      ]);
+      setResumes(resumeData);
+      setUser(userData);
+
+      // Load or create user credits
+      const userCredits = await base44.entities.UserCredits.filter({ userId: userData.email });
+      if (userCredits.length === 0) {
+        const newCredits = await base44.entities.UserCredits.create({
+          userId: userData.email,
+          coins: 100,
+          earnedTotal: 100,
+          spentTotal: 0,
+          lastEarned: new Date().toISOString()
+        });
+        setCredits(newCredits);
+      } else {
+        setCredits(userCredits[0]);
+      }
     } catch (error) {
-      console.error('Failed to load resumes:', error);
+      console.error('Failed to load data:', error);
     } finally {
       setLoading(false);
     }
@@ -100,10 +123,23 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Hero Section */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
-            Welcome back! 👋
-          </h1>
-          <p className="text-gray-600 dark:text-muted-foreground">Let's build your perfect resume</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
+                Welcome back, {user?.full_name || 'there'}! 👋
+              </h1>
+              <p className="text-gray-600 dark:text-muted-foreground">Let's build your perfect resume</p>
+            </div>
+            {credits && (
+              <div className="hidden md:flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-4 py-2 rounded-full">
+                <span className="text-2xl">🪙</span>
+                <div>
+                  <p className="text-sm font-medium">{credits.coins} Coins</p>
+                  <p className="text-xs opacity-90">Available</p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Quick Start Actions */}
@@ -162,7 +198,15 @@ export default function Dashboard() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-foreground mb-4">
             Job Applications & Interviews
           </h2>
-          <EnhancedJobTracker />
+          <div className="grid md:grid-cols-3 gap-4 mb-4">
+            <div className="md:col-span-2">
+              <EnhancedJobTracker />
+            </div>
+            <div className="space-y-4">
+              <JobNotifications />
+              <JobApplicationTips />
+            </div>
+          </div>
         </div>
 
         {/* Job Application Assistant */}
