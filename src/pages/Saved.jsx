@@ -14,12 +14,25 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { exportResumeToPDF } from '@/components/utils/pdfExport';
 import { createPageUrl } from '@/utils';
+import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
+import ModernTemplate from '@/components/resume/templates/ModernTemplate';
+import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
+import MinimalistTemplate from '@/components/resume/templates/MinimalistTemplate';
+import ExecutiveTemplate from '@/components/resume/templates/ExecutiveTemplate';
 
 export default function Saved() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const templateComponents = {
+    professional: ProfessionalTemplate,
+    modern: ModernTemplate,
+    creative: CreativeTemplate,
+    minimalist: MinimalistTemplate,
+    executive: ExecutiveTemplate,
+  };
 
   useEffect(() => {
     loadResumes();
@@ -69,14 +82,6 @@ export default function Saved() {
     } catch (error) {
       toast.error('Failed to duplicate resume');
     }
-  };
-
-  const templateColors = {
-    professional: 'bg-blue-500',
-    modern: 'bg-gradient-to-br from-purple-500 to-blue-500',
-    creative: 'bg-gradient-to-br from-pink-500 to-orange-500',
-    minimalist: 'bg-gray-700',
-    executive: 'bg-gray-900',
   };
 
   const getTimeAgo = (date) => {
@@ -167,78 +172,85 @@ export default function Saved() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredResumes.map((resume) => (
-              <Card key={resume.id} className="hover:shadow-lg transition-shadow group cursor-pointer">
-                <CardContent className="p-0">
-                  {/* Preview */}
-                  <div
-                    className={`${templateColors[resume.template] || 'bg-blue-500'} h-48 rounded-t-lg relative`}
-                    onClick={() => navigate(`${createPageUrl('Editor')}?id=${resume.id}`)}
-                  >
-                    <div className="absolute top-3 right-3">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="bg-white/90 hover:bg-white text-gray-700"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <MoreVertical className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleExport(resume)}>
-                            <Download className="w-4 h-4 mr-2" />
-                            Download PDF
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDuplicate(resume)}>
-                            <Copy className="w-4 h-4 mr-2" />
-                            Duplicate
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-red-600"
-                            onClick={() => handleDelete(resume.id)}
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+            {filteredResumes.map((resume) => {
+              const TemplateComponent = templateComponents[resume.template] || ProfessionalTemplate;
+              return (
+                <Card key={resume.id} className="hover:shadow-lg transition-shadow group cursor-pointer overflow-hidden">
+                  <CardContent className="p-0">
+                    {/* Preview */}
+                    <div
+                      className="h-48 bg-white relative overflow-hidden"
+                      onClick={() => navigate(`${createPageUrl('Editor')}?id=${resume.id}`)}
+                    >
+                      <div className="scale-[0.2] origin-top-left w-[500%] h-[500%] pointer-events-none">
+                        <TemplateComponent data={resume} />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white pointer-events-none" />
+                      
+                      <div className="absolute top-3 right-3 z-10">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="bg-white/90 hover:bg-white text-gray-700 shadow-sm"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleExport(resume)}>
+                              <Download className="w-4 h-4 mr-2" />
+                              Download PDF
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDuplicate(resume)}>
+                              <Copy className="w-4 h-4 mr-2" />
+                              Duplicate
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => handleDelete(resume.id)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Info */}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-gray-900 text-lg mb-1 group-hover:text-blue-600">
-                      {resume.title}
-                    </h3>
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <span className="capitalize">{resume.template}</span>
-                      <span>{getTimeAgo(resume.updated_date)}</span>
+                    {/* Info */}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 text-lg mb-1 group-hover:text-blue-600">
+                        {resume.title}
+                      </h3>
+                      <div className="flex items-center justify-between text-sm text-gray-500">
+                        <span className="capitalize">{resume.template}</span>
+                        <span>{getTimeAgo(resume.updated_date)}</span>
+                      </div>
+                      <div className="flex gap-2 mt-4">
+                        <Button
+                          className="flex-1"
+                          size="sm"
+                          onClick={() => navigate(`${createPageUrl('Editor')}?id=${resume.id}`)}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleExport(resume)}
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex gap-2 mt-4">
-                      <Button
-                        className="flex-1"
-                        size="sm"
-                        onClick={() => navigate(`${createPageUrl('Editor')}?id=${resume.id}`)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleExport(resume)}
-                      >
-                        <Download className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
                   </CardContent>
-                  </Card>
-                  );
-                  })}
-                  </div>
+                </Card>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>
