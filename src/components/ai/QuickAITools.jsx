@@ -144,13 +144,14 @@ Return:
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Upload Resume (PDF, DOCX)</label>
+              <label className="block text-sm font-medium mb-2">Upload Resume (PDF only)</label>
               <input
                 type="file"
-                accept=".pdf,.docx,.doc"
+                accept=".pdf"
                 onChange={(e) => setResumeFile(e.target.files[0])}
-                className="w-full"
+                className="w-full border rounded-lg p-2"
               />
+              <p className="text-xs text-muted-foreground mt-1">Please upload your resume as a PDF file for best results</p>
             </div>
             <Button onClick={analyzeResume} disabled={analyzing} className="w-full">
               {analyzing ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Analyzing...</> : 'Analyze Resume'}
