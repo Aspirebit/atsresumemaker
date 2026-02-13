@@ -119,62 +119,70 @@ export default function EnhancedJobTracker() {
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Briefcase className="w-5 h-5 text-blue-600 dark:text-primary" />
-            Job Applications & Interviews
-          </CardTitle>
+      <CardHeader className="pb-3">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+              <Briefcase className="w-4 h-4 md:w-5 md:h-5 text-blue-600 dark:text-primary" />
+              Job Applications & Interviews
+            </CardTitle>
+          </div>
           <div className="flex gap-2">
-            <Button size="sm" onClick={() => setShowAppDialog(true)}>
-              <Plus className="w-4 h-4 mr-1" />
-              Add App
+            <Button size="sm" onClick={() => setShowAppDialog(true)} className="flex-1 md:flex-none">
+              <Plus className="w-4 h-4 md:mr-1" />
+              <span className="md:inline">Add App</span>
             </Button>
-            <Button size="sm" variant="outline" onClick={() => setShowInterviewDialog(true)}>
-              <Calendar className="w-4 h-4 mr-1" />
-              Schedule
+            <Button size="sm" variant="outline" onClick={() => setShowInterviewDialog(true)} className="flex-1 md:flex-none">
+              <Calendar className="w-4 h-4 md:mr-1" />
+              <span className="md:inline">Schedule</span>
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="px-3 md:px-6">
         <Tabs defaultValue="applications">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="applications">Applications ({applications.length})</TabsTrigger>
-            <TabsTrigger value="interviews">Interviews ({interviews.length})</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 h-9">
+            <TabsTrigger value="applications" className="text-xs md:text-sm">
+              Applications ({applications.length})
+            </TabsTrigger>
+            <TabsTrigger value="interviews" className="text-xs md:text-sm">
+              Interviews ({interviews.length})
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="applications" className="space-y-3 mt-4">
+          <TabsContent value="applications" className="space-y-2 mt-3">
             {applications.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-12 text-muted-foreground">
                 <Briefcase className="w-12 h-12 mx-auto mb-2 opacity-20" />
-                <p>No applications yet</p>
+                <p className="text-sm">No applications yet</p>
               </div>
             ) : (
               applications.slice(0, 5).map((app) => (
-                <div key={app.id} className="p-3 rounded-lg border dark:border-border hover:bg-accent transition-colors">
-                  <div className="flex items-start justify-between">
+                <div key={app.id} className="p-2 md:p-3 rounded-lg border dark:border-border hover:bg-accent transition-colors">
+                  <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-sm dark:text-foreground">{app.jobTitle}</h4>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
-                        <Building2 className="w-3 h-3" />
-                        <span>{app.company}</span>
+                      <h4 className="font-semibold text-xs md:text-sm dark:text-foreground truncate">{app.jobTitle}</h4>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1 flex-wrap">
+                        <div className="flex items-center gap-1">
+                          <Building2 className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">{app.company}</span>
+                        </div>
                         {app.resumeId && (
-                          <>
+                          <div className="flex items-center gap-1">
                             <span>•</span>
                             <FileText className="w-3 h-3" />
-                            <span>Resume attached</span>
-                          </>
+                            <span className="hidden md:inline">Resume</span>
+                          </div>
                         )}
                       </div>
                       {app.nextStep && (
                         <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400 mt-1">
-                          <Clock className="w-3 h-3" />
-                          <span>{app.nextStep}</span>
+                          <Clock className="w-3 h-3 flex-shrink-0" />
+                          <span className="truncate">{app.nextStep}</span>
                         </div>
                       )}
                     </div>
-                    <span className={`px-2 py-1 text-xs font-medium rounded ${statusColors[app.status]}`}>
+                    <span className={`px-1.5 md:px-2 py-0.5 md:py-1 text-xs font-medium rounded whitespace-nowrap ${statusColors[app.status]}`}>
                       {app.status}
                     </span>
                   </div>
@@ -183,33 +191,38 @@ export default function EnhancedJobTracker() {
             )}
           </TabsContent>
 
-          <TabsContent value="interviews" className="space-y-3 mt-4">
+          <TabsContent value="interviews" className="space-y-2 mt-3">
             {interviews.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-12 text-muted-foreground">
                 <Video className="w-12 h-12 mx-auto mb-2 opacity-20" />
-                <p>No interviews scheduled</p>
+                <p className="text-sm">No interviews scheduled</p>
               </div>
             ) : (
               interviews.slice(0, 5).map((interview) => (
-                <div key={interview.id} className="p-3 rounded-lg border dark:border-border hover:bg-accent transition-colors">
+                <div key={interview.id} className="p-2 md:p-3 rounded-lg border dark:border-border hover:bg-accent transition-colors">
                   <div className="flex items-center gap-2 mb-1">
-                    <Video className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                    <h4 className="font-semibold text-sm dark:text-foreground">{interview.type}</h4>
+                    <Video className="w-3 h-3 md:w-4 md:h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" />
+                    <h4 className="font-semibold text-xs md:text-sm dark:text-foreground truncate">{interview.type}</h4>
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Calendar className="w-3 h-3" />
-                    <span>{new Date(interview.scheduledDate).toLocaleString()}</span>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">{new Date(interview.scheduledDate).toLocaleDateString()}</span>
+                    </div>
                     <span>•</span>
-                    <Clock className="w-3 h-3" />
-                    <span>{interview.duration}min</span>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-3 h-3 flex-shrink-0" />
+                      <span>{interview.duration}min</span>
+                    </div>
                   </div>
                   {interview.location && (
-                    <p className="text-xs text-muted-foreground mt-1">{interview.location}</p>
+                    <p className="text-xs text-muted-foreground mt-1 truncate">{interview.location}</p>
                   )}
                   {interview.reminder && (
                     <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 mt-1">
-                      <Bell className="w-3 h-3" />
-                      <span>Reminder set ({interview.reminderTime}min before)</span>
+                      <Bell className="w-3 h-3 flex-shrink-0" />
+                      <span className="hidden md:inline">Reminder ({interview.reminderTime}min)</span>
+                      <span className="md:hidden">Reminder</span>
                     </div>
                   )}
                 </div>

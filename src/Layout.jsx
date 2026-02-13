@@ -15,7 +15,6 @@ export default function Layout({ children, currentPageName }) {
   
   const navItems = [
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
-    { name: 'AI Builder', path: createPageUrl('Editor'), icon: Sparkles },
     { name: 'Saved', path: createPageUrl('Saved'), icon: FileText },
     { name: 'Marketplace', path: createPageUrl('TemplateMarketplace'), icon: Store },
     { name: 'Settings', path: createPageUrl('Settings'), icon: Settings },
@@ -187,7 +186,7 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Mobile Bottom Navigation */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-10 safe-bottom">
-        <div className="flex items-center justify-around px-2 py-2">
+        <div className="grid grid-cols-4 gap-1 px-2 py-2">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.name);
@@ -195,12 +194,12 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex flex-col items-center gap-1 px-4 py-2 rounded-lg transition-colors select-none touch-target ${
-                  active ? 'text-primary' : 'text-muted-foreground'
+                className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-colors select-none ${
+                  active ? 'text-primary bg-primary/10' : 'text-muted-foreground'
                 }`}
               >
-                <Icon className="w-6 h-6" />
-                <span className="text-xs font-medium">{item.name}</span>
+                <Icon className="w-5 h-5" />
+                <span className="text-xs font-medium truncate w-full text-center">{item.name}</span>
               </Link>
             );
           })}

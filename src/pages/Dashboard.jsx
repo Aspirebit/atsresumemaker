@@ -106,33 +106,33 @@ export default function Dashboard() {
         </div>
 
         {/* Quick Start Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
           <Card className="bg-gradient-to-br from-blue-600 to-blue-700 border-0 text-white hover:shadow-xl transition-all cursor-pointer" onClick={handleCreateResume}>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-8 h-8" />
+            <CardContent className="p-4 md:p-6">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-6 h-6 md:w-8 md:h-8" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-1">AI Resume Builder</h3>
-                  <p className="text-blue-100 text-sm">Create a professional resume with AI assistance</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base md:text-xl font-bold mb-0.5 md:mb-1">AI Resume Builder</h3>
+                  <p className="text-blue-100 text-xs md:text-sm">Create with AI assistance</p>
                 </div>
-                <Plus className="w-6 h-6" />
+                <Plus className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="bg-gradient-to-br from-purple-600 to-purple-700 border-0 text-white hover:shadow-xl transition-all cursor-pointer" onClick={() => setShowTemplateGallery(true)}>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-                  <FileText className="w-8 h-8" />
+            <CardContent className="p-4 md:p-6">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <FileText className="w-6 h-6 md:w-8 md:h-8" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-1">Start from Template</h3>
-                  <p className="text-purple-100 text-sm">Choose from professional templates</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base md:text-xl font-bold mb-0.5 md:mb-1">Start from Template</h3>
+                  <p className="text-purple-100 text-xs md:text-sm">Choose professional templates</p>
                 </div>
-                <Plus className="w-6 h-6" />
+                <Plus className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
