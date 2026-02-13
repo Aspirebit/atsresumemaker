@@ -23,42 +23,20 @@ export default function QuickAITools({ onCoverLetterClick }) {
 
     setAnalyzing(true);
     try {
-      // Upload file
+      // Upload file and use InvokeLLM with file_urls for direct analysis
       const { file_url } = await base44.integrations.Core.UploadFile({ file: resumeFile });
       
-      // Extract text content from the file first
-      const extractionResult = await base44.integrations.Core.ExtractDataFromUploadedFile({
-        file_url,
-        json_schema: {
-          type: "object",
-          properties: {
-            full_text: { type: "string", description: "Complete resume text content" }
-          }
-        }
-      });
-
-      if (extractionResult.status === 'error') {
-        toast.error('Failed to read resume file');
-        return;
-      }
-
-      const resumeText = extractionResult.output?.full_text || '';
-      
-      // Now analyze the extracted text
+      // Analyze directly with vision/file capabilities
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this resume and provide detailed feedback:
-
-Resume Content:
-${resumeText}
-
-Provide:
-1. Key skills identified
-2. Experience level and highlights
-3. Areas for improvement
+        prompt: `Analyze this resume document and provide detailed feedback on:
+1. Key skills identified (list all technical and soft skills)
+2. Experience level assessment and career highlights
+3. Specific areas for improvement (formatting, content, structure)
 4. Suggestions for better ATS compatibility
-5. Overall strength rating (1-10)
+5. Overall strength rating (1-10 scale)
 
-Be specific and actionable in your feedback.`,
+Be specific, actionable, and thorough in your feedback.`,
+        file_urls: [file_url],
         response_json_schema: {
           type: "object",
           properties: {
@@ -77,7 +55,7 @@ Be specific and actionable in your feedback.`,
       toast.success('Analysis complete!');
     } catch (error) {
       console.error('Resume analysis error:', error);
-      toast.error('Failed to analyze resume: ' + (error.message || 'Unknown error'));
+      toast.error('Failed to analyze resume. Please try uploading as PDF.');
     } finally {
       setAnalyzing(false);
     }

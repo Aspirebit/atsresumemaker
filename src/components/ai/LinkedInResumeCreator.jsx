@@ -27,63 +27,55 @@ export default function LinkedInResumeCreator() {
       let prompt;
       
       if (linkedinUrl.trim()) {
-        prompt = `You are analyzing a LinkedIn profile from this URL: ${linkedinUrl}
+        prompt = `Access and scrape this LinkedIn profile URL: ${linkedinUrl}
 
-CRITICAL INSTRUCTIONS - EXTRACT EXACTLY WHAT YOU SEE:
-1. NAME: Extract the exact full name shown at the top of the profile
-2. HEADLINE: The professional headline/title shown under the name
-3. LOCATION: The exact location text (e.g., "Surat, Gujarat, India")
-4. ABOUT/SUMMARY: Copy the entire "About" section text. If long, summarize into 2-3 professional sentences
-5. EXPERIENCE: For EACH job listed:
-   - Exact company name as shown
-   - Exact job title/position
-   - Location if mentioned
-   - Start date and end date (format as shown: "Jan 2020", "2020", "Present")
-   - Copy the job description/bullets exactly as written
-6. EDUCATION: For each entry:
-   - Exact school/university name
-   - Exact degree name (Bachelor's, Master's, etc.)
+YOUR TASK: Extract ALL visible information from the LinkedIn profile page.
+
+WHAT TO EXTRACT:
+1. Person's full name (displayed prominently at top)
+2. Headline/current role (below name)
+3. Location (city, state, country)
+4. About section - the full text from About/Summary
+5. ALL work experience entries:
+   - Company name
+   - Job title/role
+   - Employment dates (start - end, or "Present")
+   - Location
+   - Job description/responsibilities
+6. ALL education entries:
+   - Institution name
+   - Degree type
    - Field of study
-   - Years attended (start-end or just end year)
-7. SKILLS: Extract ALL skills listed in the Skills section - copy the exact skill names as shown
-8. PROJECTS/CERTIFICATIONS: If present, extract name and description
+   - Years attended
+7. ALL skills listed in the skills section
+8. Projects and certifications if available
 
-DO NOT invent or assume information. Only extract what you can clearly see on the profile.`;
+IMPORTANT:
+- Use web search to access the actual LinkedIn page
+- Extract real data from the page, don't make assumptions
+- If you cannot access the profile, return placeholder text "Profile access limited"
+- Preserve exact formatting of dates and names`;
       } else {
-        prompt = `You are parsing pasted LinkedIn profile text. Extract information EXACTLY as written:
+        prompt = `Parse the following LinkedIn profile text and extract structured resume data:
 
 ${profileData}
 
-EXTRACTION RULES:
-1. NAME: Find the person's full name (usually at the very top or in contact info)
-2. CURRENT ROLE: Extract current job title and company (usually in headline or first experience)
-3. LOCATION: Find city, state/country mentioned
-4. ABOUT: Look for "About" or "Summary" section - extract the full text or create a 2-3 sentence professional summary if the about section is present
-5. EXPERIENCE: For EVERY job mentioned:
-   - Company name (look for company names, organizations)
-   - Position/title held
-   - Location if mentioned
-   - Dates worked (format: "Jan 2020 - Present", "2019-2021", etc.)
-   - Job description or responsibilities (bullets or paragraphs)
-6. EDUCATION: For each school:
-   - School/University name
-   - Degree obtained (BS, BA, MS, MBA, etc.)
-   - Field of study (Computer Science, Business, etc.)
-   - Years (graduation year or range)
-7. SKILLS: Look for skills section - extract EVERY skill mentioned (technical, soft skills, tools, languages)
-8. PROJECTS/CERTIFICATIONS: If mentioned, extract project names and descriptions
+Extract these fields:
+- Full name
+- Current job title and company
+- Location
+- Professional summary (from About section, 2-3 sentences)
+- Work experience (all jobs with company, title, dates, location, description)
+- Education (schools, degrees, fields, years)
+- Skills (complete list)
+- Projects/certifications
 
-CRITICAL: 
-- Do NOT make up or infer information
-- Extract dates EXACTLY as written
-- Keep company and school names EXACTLY as shown
-- Include ALL skills listed, not just a sample
-- If information is missing, leave that field empty`;
+Return accurate data from the text provided.`;
       }
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,
-        add_context_from_internet: !!linkedinUrl.trim(),
+        add_context_from_internet: true,
         response_json_schema: {
           type: "object",
           properties: {
