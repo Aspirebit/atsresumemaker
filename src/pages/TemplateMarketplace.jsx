@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Store, Star, Download, Search, TrendingUp, Upload, Filter } from 'lucide-react';
+import PullToRefresh from '@/components/mobile/PullToRefresh';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -117,6 +118,10 @@ export default function TemplateMarketplace() {
     } catch (error) {
       toast.error('Failed to submit rating');
     }
+  };
+
+  const handleRefresh = async () => {
+    await loadTemplates();
   };
 
   return (
