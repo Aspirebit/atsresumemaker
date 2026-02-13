@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FileText, MoreVertical, Download, Trash2, Copy, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,17 +10,85 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
+import { exportResumeToPDF } from '@/utils/pdfExport';
+import { createPageUrl } from '@/utils';
 
 export default function Saved() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [resumes, setResumes] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const savedResumes = [
-    { id: 1, title: 'Software Engineer Resume', template: 'Professional', updated: '2 hours ago', color: 'bg-blue-500' },
-    { id: 2, title: 'Marketing Manager CV', template: 'Modern', updated: '1 day ago', color: 'bg-purple-500' },
-    { id: 3, title: 'Product Designer Resume', template: 'Creative', updated: '3 days ago', color: 'bg-pink-500' },
-    { id: 4, title: 'Sales Executive CV', template: 'Classic', updated: '5 days ago', color: 'bg-gray-700' },
-    { id: 5, title: 'Data Analyst Resume', template: 'Executive', updated: '1 week ago', color: 'bg-indigo-600' },
-  ];
+  useEffect(() => {
+    loadResumes();
+  }, []);
+
+  const loadResumes = async () => {
+    try {
+      const data = await base44.entities.Resume.list('-updated_date');
+      setResumes(data);
+    } catch (error) {
+      console.error('Failed to load resumes:', error);
+      toast.error('Failed to load resumes');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExport = async (resume) => {
+    try {
+      await exportResumeToPDF(resume);
+      toast.success('Resume exported successfully');
+    } catch (error) {
+      toast.error('Failed to export resume');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this resume?')) return;
+    try {
+      await base44.entities.Resume.delete(id);
+      setResumes(resumes.filter(r => r.id !== id));
+      toast.success('Resume deleted');
+    } catch (error) {
+      toast.error('Failed to delete resume');
+    }
+  };
+
+  const handleDuplicate = async (resume) => {
+    try {
+      const { id, created_date, updated_date, ...data } = resume;
+      const duplicated = await base44.entities.Resume.create({
+        ...data,
+        title: `${data.title} (Copy)`
+      });
+      setResumes([duplicated, ...resumes]);
+      toast.success('Resume duplicated');
+    } catch (error) {
+      toast.error('Failed to duplicate resume');
+    }
+  };
+
+  const templateColors = {
+    professional: 'bg-blue-500',
+    modern: 'bg-gradient-to-br from-purple-500 to-blue-500',
+    creative: 'bg-gradient-to-br from-pink-500 to-orange-500',
+    minimalist: 'bg-gray-700',
+    executive: 'bg-gray-900',
+  };
+
+  const getTimeAgo = (date) => {
+    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+    return `${Math.floor(seconds / 86400)} days ago`;
+  };
+
+  const filteredResumes = resumes.filter(resume =>
+    resume.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,7 +119,7 @@ export default function Saved() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4">
-              <p className="text-3xl font-bold text-gray-900">{savedResumes.length}</p>
+              <p className="text-3xl font-bold text-gray-900">{resumes.length}</p>
               <p className="text-sm text-gray-600 mt-1">Total Resumes</p>
             </CardContent>
           </Card>
@@ -75,77 +144,100 @@ export default function Saved() {
         </div>
 
         {/* Resume Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {savedResumes.map((resume) => (
-            <Card key={resume.id} className="hover:shadow-lg transition-shadow group cursor-pointer">
-              <CardContent className="p-0">
-                {/* Preview */}
-                <div className={`${resume.color} h-48 rounded-t-lg relative`}>
-                  <div className="absolute top-3 right-3">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="bg-white/90 hover:bg-white text-gray-700"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <MoreVertical className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Download className="w-4 h-4 mr-2" />
-                          Download
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Copy className="w-4 h-4 mr-2" />
-                          Duplicate
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 text-lg mb-1 group-hover:text-blue-600">
-                    {resume.title}
-                  </h3>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>{resume.template}</span>
-                    <span>{resume.updated}</span>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <Button className="flex-1" size="sm">
-                      Edit
-                    </Button>
-                    <Button variant="outline" size="sm">
-                      <Download className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Empty State (hidden when there are resumes) */}
-        {savedResumes.length === 0 && (
+        {loading ? (
+          <div className="text-center py-12 text-gray-500">Loading your resumes...</div>
+        ) : filteredResumes.length === 0 ? (
           <Card className="mt-8">
             <CardContent className="flex flex-col items-center justify-center py-16">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <FileText className="w-8 h-8 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No saved resumes yet</h3>
-              <p className="text-gray-600 mb-6">Create your first resume to get started</p>
-              <Button>Create New Resume</Button>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                {searchQuery ? 'No resumes found' : 'No saved resumes yet'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {searchQuery ? 'Try a different search term' : 'Create your first resume to get started'}
+              </p>
+              {!searchQuery && (
+                <Button onClick={() => navigate(createPageUrl('Dashboard'))}>
+                  Create New Resume
+                </Button>
+              )}
             </CardContent>
           </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredResumes.map((resume) => (
+              <Card key={resume.id} className="hover:shadow-lg transition-shadow group cursor-pointer">
+                <CardContent className="p-0">
+                  {/* Preview */}
+                  <div
+                    className={`${templateColors[resume.template] || 'bg-blue-500'} h-48 rounded-t-lg relative`}
+                    onClick={() => navigate(`${createPageUrl('Editor')}?id=${resume.id}`)}
+                  >
+                    <div className="absolute top-3 right-3">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="bg-white/90 hover:bg-white text-gray-700"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleExport(resume)}>
+                            <Download className="w-4 h-4 mr-2" />
+                            Download PDF
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDuplicate(resume)}>
+                            <Copy className="w-4 h-4 mr-2" />
+                            Duplicate
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => handleDelete(resume.id)}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-gray-900 text-lg mb-1 group-hover:text-blue-600">
+                      {resume.title}
+                    </h3>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span className="capitalize">{resume.template}</span>
+                      <span>{getTimeAgo(resume.updated_date)}</span>
+                    </div>
+                    <div className="flex gap-2 mt-4">
+                      <Button
+                        className="flex-1"
+                        size="sm"
+                        onClick={() => navigate(`${createPageUrl('Editor')}?id=${resume.id}`)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleExport(resume)}
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         )}
       </div>
     </div>

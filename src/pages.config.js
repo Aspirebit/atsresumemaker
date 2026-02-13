@@ -50,6 +50,7 @@
 import Dashboard from './pages/Dashboard';
 import Saved from './pages/Saved';
 import Settings from './pages/Settings';
+import Editor from './pages/Editor';
 import __Layout from './Layout.jsx';
 
 
@@ -57,6 +58,7 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Saved": Saved,
     "Settings": Settings,
+    "Editor": Editor,
 }
 
 export const pagesConfig = {
