@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
-import { exportResumeToPDF } from '@/utils/pdfExport';
+import { exportResumeToPDF } from '@/components/utils/pdfExport';
 import { createPageUrl } from '@/utils';
 
 export default function Saved() {

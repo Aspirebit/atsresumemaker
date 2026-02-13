@@ -11,7 +11,7 @@ import EducationSection from '@/components/editor/EducationSection';
 import SkillsSection from '@/components/editor/SkillsSection';
 import OptionalSections from '@/components/editor/OptionalSections';
 import ResumePreview from '@/components/resume/ResumePreview';
-import { exportResumeToPDF } from '@/utils/pdfExport';
+import { exportResumeToPDF } from '@/components/utils/pdfExport';
 import { createPageUrl } from '@/utils';
 
 export default function Editor() {
