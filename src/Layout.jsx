@@ -17,7 +17,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home },
     { name: 'Saved', path: createPageUrl('Saved'), icon: FileText },
     { name: 'Marketplace', path: createPageUrl('TemplateMarketplace'), icon: Store },
-    { name: 'Settings', path: createPageUrl('Settings'), icon: Settings },
+    { name: 'Portfolio', path: createPageUrl('Portfolio'), icon: Sparkles },
   ];
 
   const isActive = (pageName) => currentPageName === pageName;
