@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Save, Eye, EyeOff, Share2, MessageSquare, Sparkles, Palette, History, Menu, X, Target, FileCheck } from 'lucide-react';
+import { ArrowLeft, Download, Save, Eye, EyeOff, Share2, MessageSquare, Sparkles, Palette, History, Menu, X, Target, FileCheck, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
