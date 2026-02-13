@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
 export default function ShareDialog({ open, onClose, resume, onUpdate }) {

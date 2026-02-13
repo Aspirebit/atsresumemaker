@@ -14,19 +14,60 @@ export default function PresenceIndicators({ resumeId }) {
   useEffect(() => {
     if (!resumeId) return;
 
-    // Simulate presence tracking (in real implementation, use WebSocket or real-time DB)
     const updatePresence = async () => {
       try {
         const user = await base44.auth.me();
-        // In production, you'd send presence updates to a real-time service
-        // For now, we'll simulate with local state
+        
+        // Update or create presence record
+        const existingPresence = await base44.entities.Presence.filter({
+          resume_id: resumeId,
+          user_email: user.email
+        });
+
+        if (existingPresence.length > 0) {
+          await base44.entities.Presence.update(existingPresence[0].id, {
+            last_seen: new Date().toISOString(),
+            status: 'viewing'
+          });
+        } else {
+          await base44.entities.Presence.create({
+            resume_id: resumeId,
+            user_email: user.email,
+            user_name: user.full_name || user.email,
+            status: 'viewing',
+            last_seen: new Date().toISOString()
+          });
+        }
       } catch (error) {
         console.error('Failed to update presence');
       }
     };
 
+    const loadActiveUsers = async () => {
+      try {
+        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        const presences = await base44.entities.Presence.filter({
+          resume_id: resumeId
+        });
+        
+        // Filter to only show users active in last 5 minutes
+        const active = presences.filter(p => p.last_seen > fiveMinutesAgo);
+        setActiveUsers(active.map(p => ({
+          name: p.user_name,
+          email: p.user_email,
+          status: p.status
+        })));
+      } catch (error) {
+        console.error('Failed to load active users');
+      }
+    };
+
     updatePresence();
-    const interval = setInterval(updatePresence, 30000); // Update every 30s
+    loadActiveUsers();
+    const interval = setInterval(() => {
+      updatePresence();
+      loadActiveUsers();
+    }, 10000); // Update every 10s
 
     return () => clearInterval(interval);
   }, [resumeId]);
