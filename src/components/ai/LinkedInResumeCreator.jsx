@@ -24,35 +24,62 @@ export default function LinkedInResumeCreator() {
 
     setGenerating(true);
     try {
-      const prompt = linkedinUrl.trim() 
-        ? `Extract detailed resume information from this LinkedIn profile URL: ${linkedinUrl}. 
+      let prompt;
+      
+      if (linkedinUrl.trim()) {
+        prompt = `You are analyzing a LinkedIn profile from this URL: ${linkedinUrl}
 
-Parse the profile carefully and extract:
-- Full name from the headline
-- Current job title and company
-- Location
-- Professional summary (create a concise 2-3 sentence summary based on the about section)
-- All work experiences with exact company names, job titles, locations, start/end dates (format as "Jan 2020" or "2020"), and detailed descriptions
-- All education entries with school names, degrees, fields of study, and dates
-- All listed skills (extract the complete list of skills from the skills section)
-- Certifications and projects if available
+CRITICAL INSTRUCTIONS - EXTRACT EXACTLY WHAT YOU SEE:
+1. NAME: Extract the exact full name shown at the top of the profile
+2. HEADLINE: The professional headline/title shown under the name
+3. LOCATION: The exact location text (e.g., "Surat, Gujarat, India")
+4. ABOUT/SUMMARY: Copy the entire "About" section text. If long, summarize into 2-3 professional sentences
+5. EXPERIENCE: For EACH job listed:
+   - Exact company name as shown
+   - Exact job title/position
+   - Location if mentioned
+   - Start date and end date (format as shown: "Jan 2020", "2020", "Present")
+   - Copy the job description/bullets exactly as written
+6. EDUCATION: For each entry:
+   - Exact school/university name
+   - Exact degree name (Bachelor's, Master's, etc.)
+   - Field of study
+   - Years attended (start-end or just end year)
+7. SKILLS: Extract ALL skills listed in the Skills section - copy the exact skill names as shown
+8. PROJECTS/CERTIFICATIONS: If present, extract name and description
 
-Be accurate with dates and company names.`
-        : `Parse this LinkedIn profile data carefully and extract structured resume information:
+DO NOT invent or assume information. Only extract what you can clearly see on the profile.`;
+      } else {
+        prompt = `You are parsing pasted LinkedIn profile text. Extract information EXACTLY as written:
 
 ${profileData}
 
-Instructions:
-1. Identify the person's name from the top of the profile
-2. Extract current job title and company from the headline or first experience
-3. Find the location (city, state/country)
-4. Create a professional summary from the "About" section (2-3 sentences highlighting key expertise and experience)
-5. Parse ALL work experiences - extract company names, job titles, locations, dates (format as "Jan 2020" or "2020-01"), and job descriptions
-6. Extract education - school names, degrees, fields of study, graduation years
-7. List ALL skills mentioned in the skills section (look for skills keywords like "JavaScript", "Python", "Project Management", etc.)
-8. Include any certifications or notable projects
+EXTRACTION RULES:
+1. NAME: Find the person's full name (usually at the very top or in contact info)
+2. CURRENT ROLE: Extract current job title and company (usually in headline or first experience)
+3. LOCATION: Find city, state/country mentioned
+4. ABOUT: Look for "About" or "Summary" section - extract the full text or create a 2-3 sentence professional summary if the about section is present
+5. EXPERIENCE: For EVERY job mentioned:
+   - Company name (look for company names, organizations)
+   - Position/title held
+   - Location if mentioned
+   - Dates worked (format: "Jan 2020 - Present", "2019-2021", etc.)
+   - Job description or responsibilities (bullets or paragraphs)
+6. EDUCATION: For each school:
+   - School/University name
+   - Degree obtained (BS, BA, MS, MBA, etc.)
+   - Field of study (Computer Science, Business, etc.)
+   - Years (graduation year or range)
+7. SKILLS: Look for skills section - extract EVERY skill mentioned (technical, soft skills, tools, languages)
+8. PROJECTS/CERTIFICATIONS: If mentioned, extract project names and descriptions
 
-Format dates consistently and ensure company/school names are accurate.`;
+CRITICAL: 
+- Do NOT make up or infer information
+- Extract dates EXACTLY as written
+- Keep company and school names EXACTLY as shown
+- Include ALL skills listed, not just a sample
+- If information is missing, leave that field empty`;
+      }
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt,
