@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, MoreVertical, Download, Trash2, Copy, Search } from 'lucide-react';
+import { FileText, MoreVertical, Download, Trash2, Copy, Search, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,12 +20,15 @@ import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
 import MinimalistTemplate from '@/components/resume/templates/MinimalistTemplate';
 import ExecutiveTemplate from '@/components/resume/templates/ExecutiveTemplate';
 import PullToRefresh from '@/components/mobile/PullToRefresh';
+import ResumeSharing from '@/components/resume/ResumeSharing';
 
 export default function Saved() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [selectedResume, setSelectedResume] = useState(null);
 
   const templateComponents = {
     professional: ProfessionalTemplate,
@@ -226,6 +229,13 @@ export default function Saved() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => {
+                              setSelectedResume(resume);
+                              setShareDialogOpen(true);
+                            }}>
+                              <Share2 className="w-4 h-4 mr-2" />
+                              Share
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleExport(resume)}>
                               <Download className="w-4 h-4 mr-2" />
                               Download PDF
@@ -280,6 +290,17 @@ export default function Saved() {
         )}
         </div>
       </div>
+      
+      {selectedResume && (
+        <ResumeSharing 
+          resume={selectedResume}
+          open={shareDialogOpen}
+          onClose={() => {
+            setShareDialogOpen(false);
+            setSelectedResume(null);
+          }}
+        />
+      )}
     </PullToRefresh>
   );
 }

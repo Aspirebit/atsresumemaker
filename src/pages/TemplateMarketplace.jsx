@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Store, Star, Download, Search, TrendingUp, Upload, Filter } from 'lucide-react';
+import { Store, Star, Download, Search, TrendingUp, Upload, Filter, MessageSquare } from 'lucide-react';
 import PullToRefresh from '@/components/mobile/PullToRefresh';
+import TemplateRequestsPanel from '@/components/marketplace/TemplateRequestsPanel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -296,6 +297,11 @@ export default function TemplateMarketplace() {
             </DialogContent>
           </Dialog>
         )}
+
+        {/* Template Requests */}
+        <div className="mt-8">
+          <TemplateRequestsPanel />
+        </div>
 
         {/* Upload Template Dialog */}
         <UploadTemplateDialog 

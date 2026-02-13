@@ -1,17 +1,50 @@
-import React, { useState } from 'react';
-import { FileText, Loader2, Copy, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, Loader2, Copy, Download, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function CoverLetterGenerator({ resumeData }) {
+export default function CoverLetterGenerator({ resumeData, onSave }) {
   const [jobDescription, setJobDescription] = useState('');
   const [keyPoints, setKeyPoints] = useState('');
   const [generating, setGenerating] = useState(false);
   const [coverLetter, setCoverLetter] = useState('');
+  const [jobAppId, setJobAppId] = useState('');
+  const [jobApplications, setJobApplications] = useState([]);
+
+  useEffect(() => {
+    loadJobApplications();
+  }, []);
+
+  const loadJobApplications = async () => {
+    try {
+      const apps = await base44.entities.JobApplication.list('-appliedDate', 50);
+      setJobApplications(apps);
+    } catch (error) {
+      console.error('Failed to load applications');
+    }
+  };
+
+  const saveCoverLetter = async () => {
+    if (!jobAppId) {
+      toast.error('Please select a job application');
+      return;
+    }
+    
+    try {
+      await base44.entities.JobApplication.update(jobAppId, {
+        coverLetter: coverLetter
+      });
+      toast.success('Cover letter saved to application!');
+      if (onSave) onSave();
+    } catch (error) {
+      toast.error('Failed to save cover letter');
+    }
+  };
 
   const generateCoverLetter = async () => {
     if (!jobDescription.trim()) {
@@ -200,6 +233,26 @@ Start with today's date, then "Dear Hiring Manager," (or use company name if men
               <Button size="sm" variant="outline" onClick={downloadCoverLetter} className="flex-1">
                 <Download className="w-3 h-3 mr-2" />
                 Download
+              </Button>
+            </div>
+            
+            <div className="border-t pt-3 space-y-2">
+              <Label className="text-xs">Save to Job Application</Label>
+              <Select value={jobAppId} onValueChange={setJobAppId}>
+                <SelectTrigger className="text-sm">
+                  <SelectValue placeholder="Select application" />
+                </SelectTrigger>
+                <SelectContent>
+                  {jobApplications.map((app) => (
+                    <SelectItem key={app.id} value={app.id}>
+                      {app.jobTitle} - {app.company}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button size="sm" onClick={saveCoverLetter} className="w-full" variant="secondary">
+                <Save className="w-3 h-3 mr-2" />
+                Save to Application
               </Button>
             </div>
           </div>
