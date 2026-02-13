@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Download, Save, Eye, EyeOff, Share2, MessageSquare, Sparkles, Palette, History, Menu, X } from 'lucide-react';
+import { ArrowLeft, Download, Save, Eye, EyeOff, Share2, MessageSquare, Sparkles, Palette, History, Menu, X, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
@@ -19,6 +19,9 @@ import ShareDialog from '@/components/collaboration/ShareDialog';
 import CommentsPanel from '@/components/collaboration/CommentsPanel';
 import ChangeHistory from '@/components/collaboration/ChangeHistory';
 import TemplateCustomizer from '@/components/customization/TemplateCustomizer.jsx';
+import AdvancedCustomizer from '@/components/customization/AdvancedCustomizer';
+import JobMatchAnalyzer from '@/components/ai/JobMatchAnalyzer';
+import ExportDialog from '@/components/export/ExportDialog';
 
 export default function Editor() {
   const [searchParams] = useSearchParams();
@@ -33,7 +36,9 @@ export default function Editor() {
   const [showComments, setShowComments] = useState(false);
   const [showCustomize, setShowCustomize] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [showJobMatch, setShowJobMatch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
   const [aiOutput, setAIOutput] = useState(null);
   const [user, setUser] = useState(null);
   const [resumeData, setResumeData] = useState({
@@ -120,13 +125,8 @@ export default function Editor() {
     }
   };
 
-  const handleExport = async () => {
-    try {
-      await exportResumeToPDF(resumeData);
-      toast.success('Resume exported successfully');
-    } catch (error) {
-      toast.error('Failed to export resume');
-    }
+  const handleExport = () => {
+    setShowExportDialog(true);
   };
 
   const updateResumeData = (section, data) => {
@@ -168,7 +168,13 @@ export default function Editor() {
     setShowComments(panel === 'comments' ? !showComments : false);
     setShowCustomize(panel === 'customize' ? !showCustomize : false);
     setShowHistory(panel === 'history' ? !showHistory : false);
+    setShowJobMatch(panel === 'jobmatch' ? !showJobMatch : false);
     setShowMobileMenu(false);
+  };
+
+  const handleJobMatchSuggestion = (field, value) => {
+    updateResumeData(field, value);
+    toast.success('Suggestion applied');
   };
 
   return (
@@ -210,6 +216,14 @@ export default function Editor() {
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   AI
+                </Button>
+                <Button
+                  variant={showJobMatch ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => togglePanel('jobmatch')}
+                >
+                  <Target className="w-4 h-4 mr-2" />
+                  Match
                 </Button>
                 <Button
                   variant={showComments ? 'default' : 'outline'}
@@ -328,6 +342,14 @@ export default function Editor() {
                 <AIAssistant onApply={handleAIGenerate} />
               </div>
             )}
+            {showJobMatch && (
+              <div className="sticky top-20">
+                <JobMatchAnalyzer 
+                  resumeData={resumeData}
+                  onSuggestionApply={handleJobMatchSuggestion}
+                />
+              </div>
+            )}
             {showComments && resumeId && (
               <div className="sticky top-20">
                 <CommentsPanel resumeId={resumeId} />
@@ -335,9 +357,10 @@ export default function Editor() {
             )}
             {showCustomize && (
               <div className="sticky top-20">
-                <TemplateCustomizer
+                <AdvancedCustomizer
                   customization={resumeData.customization}
                   onChange={(data) => updateResumeData('customization', data)}
+                  currentTemplate={resumeData.template}
                 />
               </div>
             )}
@@ -349,7 +372,7 @@ export default function Editor() {
           </div>
 
           {/* Main Editor */}
-          <div className={`${showAI || showComments || showCustomize || showHistory ? 'lg:col-span-5' : showPreview ? 'lg:col-span-6' : 'lg:col-span-12'} space-y-4 md:space-y-6`}>
+          <div className={`${showAI || showJobMatch || showComments || showCustomize || showHistory ? 'lg:col-span-5' : showPreview ? 'lg:col-span-6' : 'lg:col-span-12'} space-y-4 md:space-y-6`}>
             {aiOutput && (
               <AIOutput
                 content={aiOutput.content}
@@ -389,7 +412,7 @@ export default function Editor() {
 
           {/* Right Sidebar - Preview */}
           {showPreview && (
-            <div className={`${showAI || showComments || showCustomize || showHistory ? 'lg:col-span-4' : 'lg:col-span-6'} hidden lg:block`}>
+            <div className={`${showAI || showJobMatch || showComments || showCustomize || showHistory ? 'lg:col-span-4' : 'lg:col-span-6'} hidden lg:block`}>
               <div className="sticky top-20">
                 <ResumePreview data={resumeData} />
               </div>
@@ -407,6 +430,12 @@ export default function Editor() {
           onUpdate={handleUpdateResume}
         />
       )}
+      
+      <ExportDialog
+        open={showExportDialog}
+        onClose={() => setShowExportDialog(false)}
+        resumeData={resumeData}
+      />
     </div>
   );
 }
