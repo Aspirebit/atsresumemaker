@@ -15,6 +15,7 @@ import LinkedInResumeCreator from '@/components/ai/LinkedInResumeCreator';
 import JobApplicationAssistant from '@/components/ai/JobApplicationAssistant';
 import JobNotifications from '@/components/jobs/JobNotifications';
 import JobApplicationTips from '@/components/jobs/JobApplicationTips';
+import CustomJobAlerts from '@/components/jobs/CustomJobAlerts';
 import ProfessionalTemplate from '@/components/resume/templates/ProfessionalTemplate';
 import ModernTemplate from '@/components/resume/templates/ModernTemplate';
 import CreativeTemplate from '@/components/resume/templates/CreativeTemplate';
@@ -204,6 +205,7 @@ export default function Dashboard() {
             </div>
             <div className="space-y-4">
               <JobNotifications />
+              <CustomJobAlerts />
               <JobApplicationTips />
             </div>
           </div>

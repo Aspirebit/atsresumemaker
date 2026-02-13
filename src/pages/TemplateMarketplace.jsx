@@ -65,6 +65,20 @@ export default function TemplateMarketplace() {
 
   const applyTemplate = async (template) => {
     try {
+      const user = await base44.auth.me();
+      const userCredits = await base44.entities.UserCredits.filter({ userId: user.email });
+      
+      if (userCredits.length === 0 || userCredits[0].coins < 100) {
+        toast.error('Insufficient coins! You need 100 coins to use this template (100 coins = $1 USD)');
+        return;
+      }
+
+      // Deduct coins
+      await base44.entities.UserCredits.update(userCredits[0].id, {
+        coins: userCredits[0].coins - 100,
+        spentTotal: (userCredits[0].spentTotal || 0) + 100
+      });
+
       // Increment download count
       await base44.entities.TemplateMarketplace.update(template.id, {
         downloads: (template.downloads || 0) + 1
@@ -85,7 +99,7 @@ export default function TemplateMarketplace() {
         sharedWith: []
       });
 
-      toast.success('Template applied!');
+      toast.success('Template applied! 100 coins deducted');
       navigate(`${createPageUrl('Editor')}?id=${newResume.id}`);
     } catch (error) {
       toast.error('Failed to apply template');
@@ -239,28 +253,34 @@ export default function TemplateMarketplace() {
                     by {template.authorName}
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedTemplate(template);
-                      }}
-                      className="flex-1"
-                    >
-                      Preview
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        applyTemplate(template);
-                      }}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700"
-                    >
-                      Use Template
-                    </Button>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center gap-1 text-xs font-semibold text-orange-600 bg-orange-50 dark:bg-orange-900/20 px-2 py-1 rounded">
+                      <span>🪙</span>
+                      <span>100 coins ($1 USD)</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedTemplate(template);
+                        }}
+                        className="flex-1"
+                      >
+                        Preview
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          applyTemplate(template);
+                        }}
+                        className="flex-1 bg-blue-600 hover:bg-blue-700"
+                      >
+                        Buy & Use
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

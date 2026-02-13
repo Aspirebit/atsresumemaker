@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { User, Bell, Globe, Palette, Download, Lock, HelpCircle, LogOut, ChevronRight, Trash2, AlertTriangle, Moon, Sun } from 'lucide-react';
+import { User, Bell, Globe, Palette, Download, Lock, HelpCircle, LogOut, ChevronRight, Trash2, AlertTriangle, Moon, Sun, FileText } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { Badge } from '@/components/ui/badge';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,6 +34,68 @@ export default function Settings() {
   const [darkMode, setDarkMode] = useState(
     document.documentElement.classList.contains('dark')
   );
+  const [user, setUser] = useState(null);
+  const [credits, setCredits] = useState(null);
+  const [resumes, setResumes] = useState([]);
+  const [coverLetters, setCoverLetters] = useState([]);
+  const [portfolio, setPortfolio] = useState({
+    selectedResumes: [],
+    selectedCoverLetters: []
+  });
+
+  React.useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const [userData, resumeData, letterData] = await Promise.all([
+        base44.auth.me(),
+        base44.entities.Resume.list(),
+        base44.entities.CoverLetter.list()
+      ]);
+      setUser(userData);
+      setResumes(resumeData);
+      setCoverLetters(letterData);
+      
+      if (userData.portfolio) {
+        setPortfolio(userData.portfolio);
+      }
+
+      const userCredits = await base44.entities.UserCredits.filter({ userId: userData.email });
+      if (userCredits.length > 0) {
+        setCredits(userCredits[0]);
+      } else {
+        const newCredits = await base44.entities.UserCredits.create({
+          userId: userData.email,
+          coins: 100,
+          earnedTotal: 100,
+          spentTotal: 0
+        });
+        setCredits(newCredits);
+      }
+    } catch (error) {
+      console.error('Failed to load data');
+    }
+  };
+
+  const savePortfolio = async () => {
+    try {
+      await base44.auth.updateMe({ portfolio });
+      toast.success('Portfolio updated');
+    } catch (error) {
+      toast.error('Failed to update portfolio');
+    }
+  };
+
+  const toggleResumeSelection = (resumeId) => {
+    setPortfolio(prev => ({
+      ...prev,
+      selectedResumes: prev.selectedResumes.includes(resumeId)
+        ? prev.selectedResumes.filter(id => id !== resumeId)
+        : [...prev.selectedResumes, resumeId]
+    }));
+  };
 
   const handleDeleteAccount = async () => {
     try {
@@ -266,6 +330,46 @@ export default function Settings() {
               <Trash2 className="w-4 h-4 mr-2" />
               Delete Account
             </Button>
+          </CardContent>
+        </Card>
+
+        {/* Portfolio Section */}
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-indigo-600" />
+                </div>
+                <CardTitle>Portfolio Showcase</CardTitle>
+              </div>
+              <Button size="sm" onClick={savePortfolio}>Save Portfolio</Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Featured Resumes</Label>
+              <div className="grid gap-2">
+                {resumes.slice(0, 5).map(resume => (
+                  <div
+                    key={resume.id}
+                    onClick={() => toggleResumeSelection(resume.id)}
+                    className={`p-3 border rounded-lg cursor-pointer transition-all ${
+                      portfolio.selectedResumes.includes(resume.id)
+                        ? 'border-primary bg-primary/5'
+                        : 'hover:border-gray-400'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">{resume.title}</span>
+                      {portfolio.selectedResumes.includes(resume.id) && (
+                        <span className="text-xs px-2 py-1 bg-primary text-primary-foreground rounded">Selected</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
