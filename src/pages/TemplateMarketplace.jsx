@@ -126,14 +126,14 @@ export default function TemplateMarketplace() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="min-h-screen bg-background p-4 md:p-6">
+      <div className="min-h-screen bg-gray-50 dark:bg-background p-4 md:p-6">
         <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <Store className="w-6 h-6 md:w-8 md:h-8 text-primary" />
+            <Store className="w-6 h-6 md:w-8 md:h-8 text-blue-600 dark:text-primary" />
             <div>
-              <h1 className="text-xl md:text-3xl font-bold text-foreground">Template Marketplace</h1>
-              <p className="text-sm text-muted-foreground">Discover and share templates</p>
+              <h1 className="text-xl md:text-3xl font-bold text-gray-900 dark:text-foreground">Template Marketplace</h1>
+              <p className="text-sm text-gray-600 dark:text-muted-foreground">Discover and share templates</p>
             </div>
           </div>
           <Button onClick={() => setShowUploadDialog(true)} className="bg-blue-600 hover:bg-blue-700 w-full md:w-auto">

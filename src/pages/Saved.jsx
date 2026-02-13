@@ -122,14 +122,14 @@ export default function Saved() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 dark:bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-foreground mb-2">
             Saved Resumes
           </h1>
-          <p className="text-gray-600">Manage and access your resume collection</p>
+          <p className="text-gray-600 dark:text-muted-foreground">Manage and access your resume collection</p>
         </div>
 
         {/* Search Bar */}
@@ -150,26 +150,26 @@ export default function Saved() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4">
-              <p className="text-3xl font-bold text-gray-900">{resumes.length}</p>
-              <p className="text-sm text-gray-600 mt-1">Total Resumes</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-foreground">{resumes.length}</p>
+              <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">Total Resumes</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <p className="text-3xl font-bold text-gray-900">3</p>
-              <p className="text-sm text-gray-600 mt-1">This Month</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-foreground">3</p>
+              <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">This Month</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <p className="text-3xl font-bold text-gray-900">12</p>
-              <p className="text-sm text-gray-600 mt-1">Downloads</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-foreground">12</p>
+              <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">Downloads</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4">
-              <p className="text-3xl font-bold text-gray-900">2</p>
-              <p className="text-sm text-gray-600 mt-1">Shared</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-foreground">2</p>
+              <p className="text-sm text-gray-600 dark:text-muted-foreground mt-1">Shared</p>
             </CardContent>
           </Card>
         </div>
@@ -205,7 +205,7 @@ export default function Saved() {
                   <CardContent className="p-0">
                     {/* Preview */}
                     <div
-                      className="h-48 bg-white relative overflow-hidden"
+                      className="h-48 bg-white dark:bg-gray-100 relative overflow-hidden"
                       onClick={() => navigate(`${createPageUrl('Editor')}?id=${resume.id}`)}
                     >
                       <div className="scale-[0.2] origin-top-left w-[500%] h-[500%] pointer-events-none">
@@ -248,10 +248,10 @@ export default function Saved() {
 
                     {/* Info */}
                     <div className="p-4">
-                      <h3 className="font-semibold text-gray-900 text-lg mb-1 group-hover:text-blue-600">
+                      <h3 className="font-semibold text-gray-900 dark:text-foreground text-lg mb-1 group-hover:text-blue-600 dark:group-hover:text-primary">
                         {resume.title}
                       </h3>
-                      <div className="flex items-center justify-between text-sm text-gray-500">
+                      <div className="flex items-center justify-between text-sm text-gray-500 dark:text-muted-foreground">
                         <span className="capitalize">{resume.template}</span>
                         <span>{getTimeAgo(resume.updated_date)}</span>
                       </div>
