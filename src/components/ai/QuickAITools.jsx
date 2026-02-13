@@ -46,7 +46,44 @@ Be specific, actionable, and thorough in your feedback.`,
             improvements: { type: "array", items: { type: "string" } },
             atsCompatibility: { type: "string" },
             overallRating: { type: "number" },
-            summary: { type: "string" }
+            summary: { type: "string" },
+            actionVerbAnalysis: {
+              type: "object",
+              properties: {
+                weakVerbs: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      verb: { type: "string" },
+                      context: { type: "string" },
+                      suggestions: { type: "array", items: { type: "string" } }
+                    }
+                  }
+                },
+                strongVerbs: { type: "array", items: { type: "string" } }
+              }
+            },
+            keywordDensity: {
+              type: "object",
+              properties: {
+                currentKeywords: { type: "array", items: { type: "string" } },
+                missingKeywords: { type: "array", items: { type: "string" } },
+                industryRelevance: { type: "string" }
+              }
+            },
+            bulletPointImprovements: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  original: { type: "string" },
+                  improved: { type: "string" },
+                  reasoning: { type: "string" },
+                  impact: { type: "string" }
+                }
+              }
+            }
           }
         }
       });
