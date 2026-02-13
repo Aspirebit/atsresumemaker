@@ -28,15 +28,44 @@ export default function QuickAITools({ onCoverLetterClick }) {
       
       // Analyze directly with vision/file capabilities
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this resume document and provide detailed feedback on:
-1. Key skills identified (list all technical and soft skills)
-2. Experience level assessment and career highlights
-3. Specific areas for improvement (formatting, content, structure)
-4. Suggestions for better ATS compatibility
-5. Overall strength rating (1-10 scale)
+        prompt: `Perform a DEEP, COMPREHENSIVE analysis of this resume document:
 
-Be specific, actionable, and thorough in your feedback.`,
+ANALYSIS REQUIREMENTS:
+
+1. **Key Skills Identification**: Extract ALL technical and soft skills
+
+2. **Experience Assessment**: Analyze career level, progression, and key highlights
+
+3. **ATS Compatibility Analysis**:
+   - Predict ATS pass rate (0-100%)
+   - Identify ATS-unfriendly elements (graphics, tables, unusual formatting)
+   - Check for keyword optimization
+   - Analyze file structure and readability for ATS systems
+   - Provide specific recommendations to improve ATS score
+
+4. **Comparative Analysis**:
+   - Compare against industry standards for similar roles
+   - Identify what top-performing resumes in this field typically include
+   - Highlight competitive advantages and gaps
+
+5. **Skill Gap Analysis**:
+   - Based on current industry trends, identify missing in-demand skills
+   - Suggest trending skills/certifications that would strengthen the profile
+   - Recommend skill development priorities
+
+6. **Action Verb Analysis**: Identify weak verbs with stronger alternatives
+
+7. **Keyword Density**: Analyze keyword usage and suggest improvements
+
+8. **Bullet Point Improvements**: Provide specific rewrites for impact
+
+9. **ACTIONABLE RECOMMENDATIONS**: Provide specific, editable changes the candidate can make immediately to improve their resume
+
+10. **Overall Rating**: Comprehensive 1-10 score with detailed reasoning
+
+Be extremely detailed, specific, and actionable. This is a professional career-changing analysis.`,
         file_urls: [file_url],
+        add_context_from_internet: true,
         response_json_schema: {
           type: "object",
           properties: {
@@ -44,9 +73,47 @@ Be specific, actionable, and thorough in your feedback.`,
             experienceLevel: { type: "string" },
             highlights: { type: "array", items: { type: "string" } },
             improvements: { type: "array", items: { type: "string" } },
-            atsCompatibility: { type: "string" },
             overallRating: { type: "number" },
             summary: { type: "string" },
+            atsAnalysis: {
+              type: "object",
+              properties: {
+                predictedPassRate: { type: "number", description: "0-100" },
+                atsScore: { type: "number", description: "1-10" },
+                strengths: { type: "array", items: { type: "string" } },
+                weaknesses: { type: "array", items: { type: "string" } },
+                specificRecommendations: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      issue: { type: "string" },
+                      fix: { type: "string" },
+                      impact: { type: "string" }
+                    }
+                  }
+                }
+              }
+            },
+            comparativeAnalysis: {
+              type: "object",
+              properties: {
+                industryStandard: { type: "string" },
+                yourPosition: { type: "string" },
+                topResumeFeatures: { type: "array", items: { type: "string" } },
+                competitiveAdvantages: { type: "array", items: { type: "string" } },
+                gaps: { type: "array", items: { type: "string" } }
+              }
+            },
+            skillGapAnalysis: {
+              type: "object",
+              properties: {
+                trendingSkills: { type: "array", items: { type: "string" } },
+                missingInDemandSkills: { type: "array", items: { type: "string" } },
+                recommendedCertifications: { type: "array", items: { type: "string" } },
+                developmentPriorities: { type: "array", items: { type: "string" } }
+              }
+            },
             actionVerbAnalysis: {
               type: "object",
               properties: {
@@ -83,6 +150,19 @@ Be specific, actionable, and thorough in your feedback.`,
                   impact: { type: "string" }
                 }
               }
+            },
+            editableRecommendations: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  section: { type: "string" },
+                  currentText: { type: "string" },
+                  suggestedText: { type: "string" },
+                  reasoning: { type: "string" }
+                }
+              },
+              description: "Specific text changes the user can copy/paste to improve their resume"
             }
           }
         }
