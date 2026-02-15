@@ -1,7 +1,24 @@
 import * as React from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import { useMediaQuery } from "@/lib/use-media-query";
+
+function useMediaQuery(query) {
+  const [matches, setMatches] = React.useState(false);
+
+  React.useEffect(() => {
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
+    
+    const listener = () => setMatches(media.matches);
+    media.addEventListener('change', listener);
+    
+    return () => media.removeEventListener('change', listener);
+  }, [matches, query]);
+
+  return matches;
+}
 
 export function ResponsiveSelect({ 
   children, 
