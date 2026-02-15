@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, Settings, Menu, Sparkles, Store, User, BookOpen } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Home, FileText, Settings, Menu, Sparkles, Store, User, BookOpen, ArrowLeft } from 'lucide-react';
 import { createPageUrl } from './utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -9,9 +9,14 @@ const tabState = {};
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const contentRef = useRef(null);
   const [restoringScroll, setRestoringScroll] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Child routes that should show back button
+  const childRoutes = ['Editor', 'SharedResume'];
+  const isChildRoute = childRoutes.includes(currentPageName) || location.search.includes('id=');
   
   const navItems = [
     { name: 'Dashboard', path: createPageUrl('Dashboard'), icon: Home, pageName: 'Dashboard' },
@@ -23,6 +28,20 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   const isActive = (item) => currentPageName === item.pageName;
+  
+  // Handle active tab tap - scroll to top and navigate to root
+  const handleTabClick = (e, item) => {
+    if (isActive(item)) {
+      e.preventDefault();
+      if (contentRef.current) {
+        contentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      // Reset to root path if we're in a child route
+      if (location.search || isChildRoute) {
+        navigate(item.path);
+      }
+    }
+  };
 
   // Save scroll position when navigating away
   useEffect(() => {
@@ -137,20 +156,32 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700 z-10 safe-top">
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
-              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
+          {isChildRoute ? (
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-2 text-white hover:bg-slate-700 px-3 py-2 rounded-lg transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span className="font-medium">Back</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h1 className="text-lg font-bold text-white">ATS Resume Builder</h1>
             </div>
-            <h1 className="text-lg font-bold text-white">ATS Resume Builder</h1>
-          </div>
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 hover:bg-slate-700 rounded-lg touch-target select-none"
-          >
-            <Menu className="w-6 h-6 text-white" />
-          </button>
+          )}
+          {!isChildRoute && (
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 hover:bg-slate-700 rounded-lg touch-target select-none"
+            >
+              <Menu className="w-6 h-6 text-white" />
+            </button>
+          )}
         </div>
       </header>
 
@@ -213,6 +244,7 @@ export default function Layout({ children, currentPageName }) {
               <Link
                 key={item.name}
                 to={item.path}
+                onClick={(e) => handleTabClick(e, item)}
                 className={`flex flex-col items-center gap-1 px-2 py-2 rounded-lg transition-all select-none ${
                   active ? 'text-white bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg' : 'text-slate-400'
                 }`}
