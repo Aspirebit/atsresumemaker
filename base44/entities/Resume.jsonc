@@ -1,0 +1,207 @@
+{
+  "name": "Resume",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Resume title/name"
+    },
+    "template": {
+      "type": "string",
+      "enum": [
+        "professional",
+        "modern",
+        "creative",
+        "minimalist",
+        "executive"
+      ],
+      "default": "professional"
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "linkedin": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        }
+      }
+    },
+    "summary": {
+      "type": "string",
+      "description": "Professional summary or objective"
+    },
+    "experience": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "school": {
+            "type": "string"
+          },
+          "degree": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "gpa": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "awards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "issuer": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "customization": {
+      "type": "object",
+      "properties": {
+        "fontFamily": {
+          "type": "string",
+          "default": "Inter"
+        },
+        "fontSize": {
+          "type": "string",
+          "default": "base"
+        },
+        "primaryColor": {
+          "type": "string",
+          "default": "#3B82F6"
+        },
+        "spacing": {
+          "type": "string",
+          "default": "normal"
+        },
+        "sectionOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "summary",
+            "experience",
+            "education",
+            "skills",
+            "projects",
+            "awards"
+          ]
+        }
+      }
+    },
+    "sharedWith": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "permission": {
+            "type": "string",
+            "enum": [
+              "view",
+              "edit"
+            ]
+          },
+          "sharedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "title",
+    "template"
+  ]
+}

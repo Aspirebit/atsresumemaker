@@ -1,0 +1,65 @@
+{
+  "name": "CustomTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "baseTemplate": {
+      "type": "string",
+      "enum": [
+        "professional",
+        "modern",
+        "creative",
+        "minimalist",
+        "executive"
+      ],
+      "description": "Base template it's derived from"
+    },
+    "customization": {
+      "type": "object",
+      "properties": {
+        "fontFamily": {
+          "type": "string"
+        },
+        "fontSize": {
+          "type": "string"
+        },
+        "primaryColor": {
+          "type": "string"
+        },
+        "spacing": {
+          "type": "string"
+        },
+        "sectionOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "customSections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "enabled": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "baseTemplate"
+  ]
+}

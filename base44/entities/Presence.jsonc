@@ -1,0 +1,51 @@
+{
+  "name": "Presence",
+  "type": "object",
+  "properties": {
+    "resume_id": {
+      "type": "string",
+      "description": "Resume being viewed/edited"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User's email"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "User's display name"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "viewing",
+        "editing"
+      ],
+      "default": "viewing",
+      "description": "What the user is doing"
+    },
+    "cursor_position": {
+      "type": "object",
+      "properties": {
+        "section": {
+          "type": "string"
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "description": "Current cursor position"
+    },
+    "last_seen": {
+      "type": "string",
+      "description": "Last activity timestamp"
+    }
+  },
+  "required": [
+    "resume_id",
+    "user_email",
+    "user_name"
+  ]
+}

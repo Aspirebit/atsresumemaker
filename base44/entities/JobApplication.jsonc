@@ -1,0 +1,68 @@
+{
+  "name": "JobApplication",
+  "type": "object",
+  "properties": {
+    "jobTitle": {
+      "type": "string",
+      "description": "Job position title"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Applied",
+        "Interviewing",
+        "Offered",
+        "Rejected",
+        "Withdrawn"
+      ],
+      "default": "Applied",
+      "description": "Application status"
+    },
+    "appliedDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of application"
+    },
+    "resumeId": {
+      "type": "string",
+      "description": "Associated resume ID"
+    },
+    "coverLetter": {
+      "type": "string",
+      "description": "Cover letter content"
+    },
+    "jobDescription": {
+      "type": "string",
+      "description": "Job posting description"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "salary": {
+      "type": "string",
+      "description": "Salary range or expectation"
+    },
+    "location": {
+      "type": "string",
+      "description": "Job location"
+    },
+    "contactPerson": {
+      "type": "string",
+      "description": "Recruiter or contact name"
+    },
+    "nextStep": {
+      "type": "string",
+      "description": "Next action or interview date"
+    }
+  },
+  "required": [
+    "jobTitle",
+    "company",
+    "status"
+  ]
+}

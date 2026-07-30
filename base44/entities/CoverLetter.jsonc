@@ -1,0 +1,43 @@
+{
+  "name": "CoverLetter",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Cover letter title"
+    },
+    "content": {
+      "type": "string",
+      "description": "Cover letter content"
+    },
+    "jobTitle": {
+      "type": "string",
+      "description": "Target job title"
+    },
+    "company": {
+      "type": "string",
+      "description": "Target company"
+    },
+    "variation": {
+      "type": "string",
+      "enum": [
+        "professional",
+        "modern",
+        "balanced"
+      ],
+      "description": "Tone variation"
+    },
+    "resumeId": {
+      "type": "string",
+      "description": "Associated resume"
+    },
+    "jobApplicationId": {
+      "type": "string",
+      "description": "Associated job application"
+    }
+  },
+  "required": [
+    "title",
+    "content"
+  ]
+}

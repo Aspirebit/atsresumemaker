@@ -1,0 +1,37 @@
+{
+  "name": "Referral",
+  "type": "object",
+  "properties": {
+    "referrerId": {
+      "type": "string",
+      "description": "User who referred"
+    },
+    "referredEmail": {
+      "type": "string",
+      "description": "Email of referred user"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed"
+      ],
+      "default": "pending",
+      "description": "Referral status"
+    },
+    "coinsEarned": {
+      "type": "number",
+      "default": 0,
+      "description": "Coins earned from referral"
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When referral was completed"
+    }
+  },
+  "required": [
+    "referrerId",
+    "referredEmail"
+  ]
+}

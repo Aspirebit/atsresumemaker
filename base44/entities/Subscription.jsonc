@@ -1,0 +1,60 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "User email"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "free",
+        "basic",
+        "pro",
+        "premium"
+      ],
+      "default": "free",
+      "description": "Subscription tier"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "cancelled",
+        "expired"
+      ],
+      "default": "active",
+      "description": "Subscription status"
+    },
+    "startDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Subscription start date"
+    },
+    "endDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Subscription end date"
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "aiGenerationsPerMonth": {
+          "type": "number"
+        },
+        "templatesAccess": {
+          "type": "string"
+        },
+        "prioritySupport": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "required": [
+    "userId",
+    "plan",
+    "status"
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "JobAlert",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "User email"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Job title keywords"
+    },
+    "platforms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "LinkedIn",
+          "Indeed",
+          "Glassdoor",
+          "ZipRecruiter",
+          "Monster"
+        ]
+      },
+      "description": "Job platforms to monitor"
+    },
+    "minSalary": {
+      "type": "number",
+      "description": "Minimum salary"
+    },
+    "maxSalary": {
+      "type": "number",
+      "description": "Maximum salary"
+    },
+    "locations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Preferred locations"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Alert status"
+    }
+  },
+  "required": [
+    "userId",
+    "keywords",
+    "platforms"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "name": "TemplateMarketplace",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Template description"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "professional",
+        "modern",
+        "creative",
+        "minimalist",
+        "executive",
+        "technical",
+        "academic"
+      ],
+      "description": "Template category"
+    },
+    "previewImage": {
+      "type": "string",
+      "description": "URL to preview image"
+    },
+    "templateData": {
+      "type": "object",
+      "description": "Template configuration and styling"
+    },
+    "author": {
+      "type": "string",
+      "description": "Author email"
+    },
+    "authorName": {
+      "type": "string",
+      "description": "Author display name"
+    },
+    "downloads": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of downloads"
+    },
+    "rating": {
+      "type": "number",
+      "default": 0,
+      "description": "Average rating"
+    },
+    "ratingCount": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of ratings"
+    },
+    "reviews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "string"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "number"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "templateData",
+    "author",
+    "authorName"
+  ]
+}

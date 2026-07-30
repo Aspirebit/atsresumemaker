@@ -1,0 +1,58 @@
+{
+  "name": "RecruiterContact",
+  "type": "object",
+  "properties": {
+    "jobApplicationId": {
+      "type": "string",
+      "description": "Associated job application"
+    },
+    "recruiterName": {
+      "type": "string",
+      "description": "Recruiter name"
+    },
+    "recruiterEmail": {
+      "type": "string",
+      "description": "Recruiter email"
+    },
+    "recruiterPhone": {
+      "type": "string",
+      "description": "Recruiter phone"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "communications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "email",
+              "phone",
+              "meeting"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "nextFollowUp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Next follow-up date"
+    }
+  },
+  "required": [
+    "recruiterName",
+    "company"
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "JobNotification",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "User email"
+    },
+    "jobTitle": {
+      "type": "string",
+      "description": "Job title"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "LinkedIn",
+        "Indeed",
+        "Other"
+      ],
+      "description": "Job platform"
+    },
+    "jobUrl": {
+      "type": "string",
+      "description": "Link to job posting"
+    },
+    "location": {
+      "type": "string",
+      "description": "Job location"
+    },
+    "salary": {
+      "type": "string",
+      "description": "Salary range"
+    },
+    "postedDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When job was posted"
+    },
+    "read": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user has seen notification"
+    },
+    "applied": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether user has applied"
+    }
+  },
+  "required": [
+    "userId",
+    "jobTitle",
+    "company",
+    "platform"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "name": "Interview",
+  "type": "object",
+  "properties": {
+    "jobApplicationId": {
+      "type": "string",
+      "description": "Associated job application"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Phone Screen",
+        "Technical",
+        "Behavioral",
+        "Panel",
+        "Final"
+      ],
+      "description": "Interview type"
+    },
+    "scheduledDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Interview date and time"
+    },
+    "duration": {
+      "type": "number",
+      "description": "Duration in minutes"
+    },
+    "location": {
+      "type": "string",
+      "description": "Location or meeting link"
+    },
+    "interviewers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Interviewer names"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Preparation notes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "completed",
+        "cancelled"
+      ],
+      "default": "scheduled"
+    },
+    "reminder": {
+      "type": "boolean",
+      "default": true
+    },
+    "reminderTime": {
+      "type": "number",
+      "default": 60,
+      "description": "Minutes before to remind"
+    }
+  },
+  "required": [
+    "jobApplicationId",
+    "type",
+    "scheduledDate"
+  ]
+}

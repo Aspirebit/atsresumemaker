@@ -1,0 +1,37 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "resume_id": {
+      "type": "string",
+      "description": "Resume this comment belongs to"
+    },
+    "section": {
+      "type": "string",
+      "description": "Section of the resume (e.g., summary, experience, education)"
+    },
+    "content": {
+      "type": "string",
+      "description": "Comment text"
+    },
+    "resolved": {
+      "type": "boolean",
+      "default": false
+    },
+    "author_email": {
+      "type": "string",
+      "description": "Email of the comment author"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Name of the comment author"
+    }
+  },
+  "required": [
+    "resume_id",
+    "section",
+    "content",
+    "author_email",
+    "author_name"
+  ]
+}

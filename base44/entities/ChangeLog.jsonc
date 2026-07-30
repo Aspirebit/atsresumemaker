@@ -1,0 +1,46 @@
+{
+  "name": "ChangeLog",
+  "type": "object",
+  "properties": {
+    "resume_id": {
+      "type": "string",
+      "description": "Resume this change belongs to"
+    },
+    "section": {
+      "type": "string",
+      "description": "Section that was changed"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "created",
+        "updated",
+        "deleted"
+      ],
+      "description": "Type of change"
+    },
+    "before": {
+      "type": "string",
+      "description": "Content before change"
+    },
+    "after": {
+      "type": "string",
+      "description": "Content after change"
+    },
+    "changed_by_email": {
+      "type": "string",
+      "description": "Email of user who made the change"
+    },
+    "changed_by_name": {
+      "type": "string",
+      "description": "Name of user who made the change"
+    }
+  },
+  "required": [
+    "resume_id",
+    "section",
+    "action",
+    "changed_by_email",
+    "changed_by_name"
+  ]
+}

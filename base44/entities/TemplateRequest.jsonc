@@ -1,0 +1,62 @@
+{
+  "name": "TemplateRequest",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Template request title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "professional",
+        "modern",
+        "creative",
+        "minimalist",
+        "executive",
+        "technical",
+        "academic"
+      ],
+      "description": "Desired category"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Desired features"
+    },
+    "votes": {
+      "type": "number",
+      "default": 0,
+      "description": "Community votes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in-progress",
+        "completed",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "requestedBy": {
+      "type": "string",
+      "description": "User email"
+    },
+    "requestedByName": {
+      "type": "string",
+      "description": "User name"
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "category"
+  ]
+}
